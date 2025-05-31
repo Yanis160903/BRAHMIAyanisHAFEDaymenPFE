@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Patient - Pharmacie Clinique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --border-radius: 16px;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .navbar .logo i {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 var(--spacing);
+        }
+
+        .details-container {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .details-header {
+            padding: 1.8rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .details-header h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.4rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: var(--transition);
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.2);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .btn.secondary {
+            background: var(--text-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+            opacity: 0.95;
+        }
+
+        .details-content {
+            padding: 2rem;
+        }
+
+        .details-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .details-section h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .details-section h2 i {
+            font-size: 1.3rem;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .detail-item label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .detail-item span {
+            color: var(--text-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            background: rgba(108, 99, 255, 0.05);
+            border-radius: 8px;
+            min-height: 2.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .historique-container {
+            overflow-x: auto;
+        }
+
+        .historique-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .historique-table th,
+        .historique-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .historique-table th {
+            background: rgba(108, 99, 255, 0.05);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .historique-table tr:hover {
+            background: rgba(108, 99, 255, 0.02);
+        }
+
+        /* Styles pour l'historique des modifications */
+        .historique-table tr.modification {
+            background-color: rgba(108, 99, 255, 0.05);
+        }
+
+        .historique-table tr.modification:hover {
+            background-color: rgba(108, 99, 255, 0.08);
+        }
+
+        .historique-table .valeur-avant {
+            color: var(--danger-color);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .historique-table .valeur-avant::before {
+            content: "−";
+            position: absolute;
+            left: 0.5rem;
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        .historique-table .valeur-apres {
+            color: var(--success-color);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .historique-table .valeur-apres::before {
+            content: "+";
+            position: absolute;
+            left: 0.5rem;
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .historique-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .historique-table th {
+            background: rgba(108, 99, 255, 0.05);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .historique-container {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.1);
+            background: var(--glass-bg);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem auto;
+            }
+
+            .details-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .details-section {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-clinic-medical"></i>
+            <span>Pharmacie Clinique</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="liste-patients.html"><i class="fas fa-users"></i> Patients</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="details-container">
+            <div class="details-header">
+                <h1>Détails du Patient</h1>
+                <div class="action-buttons">
+                    <button class="btn secondary" onclick="window.location.href='liste-patients.html'">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <button class="btn primary" id="editBtn">
+                        <i class="fas fa-edit"></i> Modifier
+                    </button>
+                </div>
+            </div>
+
+            <div class="details-content">
+                <!-- Informations Générales -->
+                <section class="details-section">
+                    <h2><i class="fas fa-user"></i> Informations Générales</h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>N° Dossier</label>
+                            <span id="numeroDossier"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Nom</label>
+                            <span id="nom"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Prénom</label>
+                            <span id="prenom"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Date de Naissance</label>
+                            <span id="dateNaissance"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Téléphone</label>
+                            <span id="telephone"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Profession</label>
+                            <span id="profession"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Assurance</label>
+                            <span id="assurance"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Médecin Traitant</label>
+                            <span id="medecinTraitant"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Adresse</label>
+                            <span id="adresse"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Antécédents -->
+                <section class="details-section">
+                    <h2><i class="fas fa-history"></i> Antécédents</h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>T Value</label>
+                            <span id="tValue"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>N Value</label>
+                            <span id="nValue"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>M Value</label>
+                            <span id="mValue"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Protocole</label>
+                            <span id="protocole"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Antécédents Médicaux</label>
+                            <span id="antecedentsMedicaux"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Antécédents Chirurgicaux</label>
+                            <span id="antecedentsChirurgicaux"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Antécédents Familiaux</label>
+                            <span id="antecedentsFamiliaux"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Hygiène de Vie</label>
+                            <span id="hygieneVie"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Alertes</label>
+                            <span id="alertes"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Habitudes Toxiques</label>
+                            <span id="habitudesToxiques"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Médicaments -->
+                <section class="details-section">
+                    <h2><i class="fas fa-pills"></i> Médicaments</h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>Allergies Médicamenteuses</label>
+                            <span id="allergieMedi"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Médicaments</label>
+                            <span id="medicament"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Automédication</label>
+                            <span id="automedication"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Médicaments en Automédication</label>
+                            <span id="medicamentAutomed"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Compléments</label>
+                            <span id="complements"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Détails des Compléments</label>
+                            <span id="complement"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Phytothérapie</label>
+                            <span id="phytotherapie"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Détails Phytothérapie</label>
+                            <span id="phytotherapieDetails"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Vaccination</label>
+                            <span id="vaccination"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Vaccins Effectués</label>
+                            <span id="vaccinsEffectues"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Antibiotiques</label>
+                            <span id="atb"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Détails Antibiotiques</label>
+                            <span id="antibiotiques"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Prescription -->
+                <section class="details-section">
+                    <h2><i class="fas fa-prescription"></i> Prescription</h2>
+                    <div class="details-grid">
+                        <div class="detail-item full-width">
+                            <label>Indication</label>
+                            <span id="indication"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Médication</label>
+                            <span id="medication"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Posologie</label>
+                            <span id="posologie"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Date de Début</label>
+                            <span id="debut"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Date de Fin</label>
+                            <span id="fin"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Commentaire</label>
+                            <span id="commentaire"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Suivi -->
+                <section class="details-section">
+                    <h2><i class="fas fa-heartbeat"></i> Suivi</h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>Date de Suivi</label>
+                            <span id="date_suivi"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Type d'Examen</label>
+                            <span id="type_examen"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Résultat d'Analyse</label>
+                            <span id="resultat_analyse"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Unité de Mesure</label>
+                            <span id="unite_mesure"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Effets Secondaires</label>
+                            <span id="effets_secondaires"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Poids/Surface</label>
+                            <span id="poids_surface"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Pression Artérielle</label>
+                            <span id="pression_arterielle"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Résultat d'Imagerie</label>
+                            <span id="resultat_imagerie"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Évaluation -->
+                <section class="details-section">
+                    <h2><i class="fas fa-clipboard-check"></i> Évaluation</h2>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <label>Date d'Évaluation</label>
+                            <span id="dateEval"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Type PLM</label>
+                            <span id="typePLM"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Sous-Type</label>
+                            <span id="sousType"></span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Médicament</label>
+                            <span id="medicamentEval"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Intervention</label>
+                            <span id="intervention"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Objectifs</label>
+                            <span id="objectifs"></span>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>Suivi</label>
+                            <span id="suivi"></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Historique des Modifications -->
+                <section class="details-section">
+                    <h2><i class="fas fa-history"></i> Historique des Modifications</h2>
+                    <div class="historique-container">
+                        <table class="historique-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Champ Modifié</th>
+                                    <th>Ancienne Valeur</th>
+                                    <th>Nouvelle Valeur</th>
+                                    <th>Utilisateur</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historiqueBody">
+                                <!-- Les données seront chargées dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pharmacie Clinique. Tous droits réservés.</p>
+    </footer>
+
+    <script src="details-script.js"></script>
+</body>
+</html> 

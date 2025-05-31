@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier Patient - Pharmacie Clinique</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="edit-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-clinic-medical"></i>
+            <span>Pharmacie Clinique</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="liste-patients.html" class="active"><i class="fas fa-users"></i> Patients</a></li>
+            <li><a href="#"><i class="fas fa-pills"></i> Médicaments</a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> Statistiques</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="edit-container">
+            <div class="edit-header">
+                <h1>Modifier les Informations du Patient</h1>
+                <div class="action-buttons">
+                    <button class="btn secondary" onclick="window.location.href='liste-patients.html'">
+                        <i class="fas fa-arrow-left"></i> Retour
+                    </button>
+                    <button class="btn primary" id="saveBtn">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </div>
+            </div>
+
+            <form id="editForm">
+                <!-- Étape 1: Informations Générales -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-user"></i> Informations Générales</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="dateEntretien">Date d'Entretien</label>
+                            <input type="date" id="dateEntretien" name="dateEntretien" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numeroDossier">Numéro de Dossier</label>
+                            <input type="number" id="numeroDossier" name="numeroDossier" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="nom">Nom</label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">Prénom</label>
+                            <input type="text" id="prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dateNaissance">Date de Naissance</label>
+                            <input type="date" id="dateNaissance" name="dateNaissance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone">Téléphone</label>
+                            <input type="tel" id="telephone" name="telephone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profession">Profession</label>
+                            <input type="text" id="profession" name="profession" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assurance">Assurance</label>
+                            <input type="text" id="assurance" name="assurance" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="adresse">Adresse</label>
+                            <textarea id="adresse" name="adresse" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="medecinTraitant">Médecin Traitant</label>
+                            <input type="text" id="medecinTraitant" name="medecinTraitant" required>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Étape 2: Antécédents Médicaux -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-history"></i> Antécédents Médicaux et Habitudes</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tValue">T Value</label>
+                            <input type="text" id="tValue" name="tValue">
+                        </div>
+                        <div class="form-group">
+                            <label for="nValue">N Value</label>
+                            <input type="text" id="nValue" name="nValue">
+                        </div>
+                        <div class="form-group">
+                            <label for="mValue">M Value</label>
+                            <input type="text" id="mValue" name="mValue">
+                        </div>
+                        <div class="form-group">
+                            <label for="protocole">Protocole</label>
+                            <input type="text" id="protocole" name="protocole">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsMedicaux">Antécédents Médicaux</label>
+                            <textarea id="antecedentsMedicaux" name="antecedentsMedicaux"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsChirurgicaux">Antécédents Chirurgicaux</label>
+                            <textarea id="antecedentsChirurgicaux" name="antecedentsChirurgicaux"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsFamiliaux">Antécédents Familiaux</label>
+                            <textarea id="antecedentsFamiliaux" name="antecedentsFamiliaux"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="hygieneVie">Hygiène de Vie</label>
+                            <textarea id="hygieneVie" name="hygieneVie"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="alertes">Alertes</label>
+                            <textarea id="alertes" name="alertes"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="habitudesToxiques">Habitudes Toxiques</label>
+                            <textarea id="habitudesToxiques" name="habitudesToxiques"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Étape 3: Médicaments -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-pills"></i> Médicaments et Compléments</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="allergieMedi">Allergies Médicamenteuses</label>
+                            <select id="allergieMedi" name="allergieMedi" onchange="toggleTextInput('allergieMedi', 'medicament')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="medicamentGroup" style="display: none;">
+                            <label for="medicament">Médicaments</label>
+                            <input type="text" id="medicament" name="medicament">
+                        </div>
+                        <div class="form-group">
+                            <label for="automedication">Automédication</label>
+                            <select id="automedication" name="automedication" onchange="toggleTextInput('automedication', 'medicamentAutomed')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="medicamentAutomedGroup" style="display: none;">
+                            <label for="medicamentAutomed">Médicaments en Automédication</label>
+                            <input type="text" id="medicamentAutomed" name="medicamentAutomed">
+                        </div>
+                        <div class="form-group">
+                            <label for="complements">Compléments</label>
+                            <select id="complements" name="complements" onchange="toggleTextInput('complements', 'complement')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="complementGroup" style="display: none;">
+                            <label for="complement">Détails des Compléments</label>
+                            <input type="text" id="complement" name="complement">
+                        </div>
+                        <div class="form-group">
+                            <label for="phytotherapie">Phytothérapie</label>
+                            <select id="phytotherapie" name="phytotherapie" onchange="toggleTextInput('phytotherapie', 'phytotherapieDetails')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="phytotherapieDetailsGroup" style="display: none;">
+                            <label for="phytotherapieDetails">Détails Phytothérapie</label>
+                            <input type="text" id="phytotherapieDetails" name="phytotherapieDetails">
+                        </div>
+                        <div class="form-group">
+                            <label for="vaccination">Vaccination</label>
+                            <select id="vaccination" name="vaccination" onchange="toggleTextInput('vaccination', 'vaccinsEffectues')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="vaccinsEffectuesGroup" style="display: none;">
+                            <label for="vaccinsEffectues">Vaccins Effectués</label>
+                            <input type="text" id="vaccinsEffectues" name="vaccinsEffectues">
+                        </div>
+                        <div class="form-group">
+                            <label for="atb">Antibiotiques</label>
+                            <select id="atb" name="atb" onchange="toggleTextInput('atb', 'antibiotiques')">
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="antibiotiquesGroup" style="display: none;">
+                            <label for="antibiotiques">Antibiotiques</label>
+                            <input type="text" id="antibiotiques" name="antibiotiques">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Étape 4: Prescription -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-prescription"></i> Prescription Médicale</h2>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="indication">Indication</label>
+                            <textarea id="indication" name="indication"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="medication">Médication</label>
+                            <textarea id="medication" name="medication"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="posologie">Posologie</label>
+                            <textarea id="posologie" name="posologie"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="debut">Date de Début</label>
+                            <input type="date" id="debut" name="debut">
+                        </div>
+                        <div class="form-group">
+                            <label for="fin">Date de Fin</label>
+                            <input type="date" id="fin" name="fin">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="commentaire">Commentaire</label>
+                            <textarea id="commentaire" name="commentaire"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Étape 5: Suivi -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-heartbeat"></i> Suivi Médical</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="date_suivi">Date de Suivi</label>
+                            <input type="date" id="date_suivi" name="date_suivi">
+                        </div>
+                        <div class="form-group">
+                            <label for="type_examen">Type d'Examen</label>
+                            <input type="text" id="type_examen" name="type_examen">
+                        </div>
+                        <div class="form-group">
+                            <label for="resultat_analyse">Résultat d'Analyse</label>
+                            <input type="text" id="resultat_analyse" name="resultat_analyse">
+                        </div>
+                        <div class="form-group">
+                            <label for="unite_mesure">Unité de Mesure</label>
+                            <input type="text" id="unite_mesure" name="unite_mesure">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="effets_secondaires">Effets Secondaires</label>
+                            <textarea id="effets_secondaires" name="effets_secondaires"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="poids_surface">Poids/Surface</label>
+                            <input type="text" id="poids_surface" name="poids_surface">
+                        </div>
+                        <div class="form-group">
+                            <label for="pression_arterielle">Pression Artérielle</label>
+                            <input type="text" id="pression_arterielle" name="pression_arterielle">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="resultat_imagerie">Résultat d'Imagerie</label>
+                            <textarea id="resultat_imagerie" name="resultat_imagerie"></textarea>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Étape 6: Évaluation -->
+                <section class="edit-section">
+                    <h2><i class="fas fa-clipboard-check"></i> Évaluation Médicale</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="dateEval">Date d'Évaluation</label>
+                            <input type="date" id="dateEval" name="dateEval">
+                        </div>
+                        <div class="form-group">
+                            <label for="typePLM">Type PLM</label>
+                            <select id="typePLM" name="typePLM">
+                                <option value="Indication">Indication</option>
+                                <option value="Efficacite">Efficacité</option>
+                                <option value="Securite">Sécurité</option>
+                                <option value="Adherence">Adhérence</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sousType">Sous-Type</label>
+                            <input type="text" id="sousType" name="sousType">
+                        </div>
+                        <div class="form-group">
+                            <label for="medicament">Médicament</label>
+                            <input type="text" id="medicament" name="medicament">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="intervention">Intervention</label>
+                            <textarea id="intervention" name="intervention"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="objectifs">Objectifs</label>
+                            <textarea id="objectifs" name="objectifs"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="suivi">Suivi</label>
+                            <textarea id="suivi" name="suivi"></textarea>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pharmacie Clinique. Tous droits réservés.</p>
+    </footer>
+
+    <script src="edit-script.js"></script>
+</body>
+</html> 

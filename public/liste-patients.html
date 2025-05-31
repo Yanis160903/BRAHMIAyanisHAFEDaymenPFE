@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Patients - Pharmacie Clinique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-light: #8B85FF;
+            --primary-dark: #5A52D5;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --border-radius: 16px;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1.2rem 2.5rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .navbar:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .navbar-brand::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+
+        .navbar-brand:hover::after {
+            transform: translateX(0);
+        }
+
+        .navbar-brand i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .navbar-brand:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            font-size: 1.1rem;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-link:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-link.active:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 90px;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .header:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            font-size: 2.6rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(108, 99, 255, 0.1);
+        }
+
+        .header .btn-primary {
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: var(--shadow);
+        }
+
+        .header .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .header .btn-primary i {
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+
+        .header .btn-primary:hover i {
+            transform: scale(1.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+            padding: 1.8rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filters::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(139, 133, 255, 0.05));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .filters:hover::before {
+            opacity: 1;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .search-container:focus-within {
+            transform: translateY(-2px);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            padding-left: 3.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1.1rem;
+            transition: var(--transition);
+            font-weight: 500;
+            box-shadow: var(--shadow);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            pointer-events: none;
+            transition: var(--transition);
+        }
+
+        .search-container:focus-within .search-icon {
+            transform: translateY(-50%) scale(1.1);
+            color: var(--primary-dark);
+        }
+
+        .filters select {
+            min-width: 220px;
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            background: var(--card-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            font-weight: 500;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236C63FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem center;
+            background-size: 1.2em;
+            box-shadow: var(--shadow);
+        }
+
+        .filters select:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filters select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filters select option {
+            padding: 1rem;
+            background: var(--glass-bg);
+            color: var(--text-color);
+            font-size: 1.1rem;
+        }
+
+        .filters select option:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .patients-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+
+        .patient-card {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 2rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.3s ease-out;
+            margin-bottom: 1.5rem;
+        }
+
+        .patient-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(139, 133, 255, 0.1));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .patient-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(108, 99, 255, 0.3);
+        }
+
+        .patient-card:hover::before {
+            opacity: 1;
+        }
+
+        .patient-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .patient-avatar::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: var(--transition);
+        }
+
+        .patient-card:hover .patient-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(108, 99, 255, 0.3);
+        }
+
+        .patient-card:hover .patient-avatar::after {
+            transform: rotate(45deg) translate(50%, 50%);
+        }
+
+        .patient-info {
+            flex: 1;
+            min-width: 0;
+            padding-right: 2rem;
+            border-right: 2px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .patient-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .patient-details {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+        }
+
+        .patient-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .patient-detail:hover {
+            color: var(--primary-color);
+            transform: translateX(5px);
+            background: rgba(108, 99, 255, 0.1);
+        }
+
+        .patient-detail i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .patient-detail:hover i {
+            transform: scale(1.1);
+        }
+
+        .patient-id {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .patient-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: nowrap;
+            margin-left: auto;
+        }
+
+        .btn {
+            padding: 0.8rem 1.2rem;
+            min-width: 120px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            transform: translateY(-100%);
+            transition: var(--transition);
+        }
+
+        .btn:hover::before {
+            transform: translateY(0);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #F6AD55);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #FC8181);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #4299E1, #63B3ED);
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #3182CE, #4299E1);
+        }
+
+        .no-patients {
+            text-align: center;
+            padding: 5rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            font-size: 1.3rem;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .no-patients i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            opacity: 0.5;
+        }
+
+        .no-patients p {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .patient-status {
+            padding: 0.6rem 1.4rem;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            margin-left: 2rem;
+        }
+
+        .patient-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+
+        .patient-card:hover .patient-status::before {
+            transform: translateX(100%);
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.2), rgba(72, 187, 120, 0.1));
+            color: var(--success-color);
+        }
+
+        .status-archived {
+            background: linear-gradient(135deg, rgba(237, 137, 54, 0.2), rgba(237, 137, 54, 0.1));
+            color: var(--warning-color);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            opacity: 0.5;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+            }
+
+            .navbar-nav {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.8rem;
+                font-size: 1rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .patient-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1.5rem;
+            }
+
+            .patient-header {
+                width: 100%;
+                padding-right: 0;
+                padding-bottom: 1.5rem;
+                border-right: none;
+                border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+            }
+
+            .patient-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .filters select {
+                width: 100%;
+            }
+
+            .patient-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fas fa-clinic-medical"></i>
+            Pharmacie Clinique
+        </a>
+        <div class="navbar-nav">
+            <a href="/" class="nav-link">Accueil</a>
+            <a href="/liste-patients" class="nav-link active">Patients</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>Liste des Patients</h1>
+                <button class="btn btn-primary" onclick="window.location.href='ajouter-patient.html'">
+                    <i class="fas fa-user-plus"></i>
+                    Nouveau Patient
+                </button>
+            </div>
+
+            <div class="filters">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un patient..." oninput="filterPatients()">
+                </div>
+                <select id="statusFilter" onchange="filterPatients()">
+                    <option value="all">Tous les patients</option>
+                    <option value="active">Patients actifs</option>
+                    <option value="archived">Patients archivés</option>
+                </select>
+            </div>
+
+            <div class="patients-grid" id="patientsGrid">
+                <!-- Les patients seront ajoutés dynamiquement ici -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let patients = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
+
+        // Chargement des patients
+        async function loadPatients() {
+            try {
+                const response = await fetch('/api/patients');
+                patients = await response.json();
+                renderPatients();
+            } catch (error) {
+                console.error('Erreur lors du chargement des patients:', error);
+                showError('Impossible de charger la liste des patients');
+            }
+        }
+
+        // Affichage des patients
+        function renderPatients() {
+            const filteredPatients = getFilteredPatients();
+            const patientsGrid = document.getElementById('patientsGrid');
+
+            if (filteredPatients.length === 0) {
+                if (searchQuery) {
+                    patientsGrid.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-search"></i>
+                            <p>Aucun patient ne correspond à votre recherche</p>
+                        </div>`;
+                } else {
+                    patientsGrid.innerHTML = `
+                        <div class="no-patients">
+                            <i class="fas fa-user-slash"></i>
+                            <p>Aucun patient trouvé</p>
+                        </div>`;
+                }
+                return;
+            }
+
+            patientsGrid.innerHTML = filteredPatients.map(patient => `
+                <div class="patient-card" data-id="${patient._id}">
+                    <div class="patient-header">
+                        <div class="patient-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="patient-info">
+                            <div class="patient-name">${patient.nom} ${patient.prenom}</div>
+                            <div class="patient-details">
+                                <div class="patient-detail">
+                                    <i class="fas fa-id-card"></i>
+                                    <span>N° ${patient.numeroDossier}</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-phone"></i>
+                                    <span>${patient.telephone || 'Non renseigné'}</span>
+                                </div>
+                                <div class="patient-detail">
+                                    <i class="fas fa-user-md"></i>
+                                    <span>${patient.medecinTraitant || 'Non renseigné'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span class="patient-status ${patient.archived ? 'status-archived' : 'status-active'}">
+                            <i class="fas ${patient.archived ? 'fa-archive' : 'fa-check-circle'}"></i>
+                            ${patient.archived ? 'Archivé' : 'Actif'}
+                        </span>
+                    </div>
+                    <div class="patient-actions">
+                        <button class="btn btn-primary" onclick="viewPatient('${patient._id}')">
+                            <i class="fas fa-eye"></i>
+                            Voir
+                        </button>
+                        <button class="btn btn-warning" onclick="editPatient('${patient._id}')">
+                            <i class="fas fa-edit"></i>
+                            Modifier
+                        </button>
+                        <button class="btn btn-info" onclick="viewVersions('${patient._id}')">
+                            <i class="fas fa-history"></i>
+                            Versions
+                        </button>
+                        <button class="btn btn-primary" onclick="generatePDF('${patient._id}')">
+                            <i class="fas fa-file-pdf"></i>
+                            PDF
+                        </button>
+                        <button class="btn btn-info" onclick="uploadDocument('${patient._id}')">
+                            <i class="fas fa-file-upload"></i>
+                            Ajouter Document
+                        </button>
+                        ${patient.archived ? 
+                            `<button class="btn btn-primary" onclick="restorePatient('${patient._id}')">
+                                <i class="fas fa-undo"></i>
+                                Restaurer
+                            </button>` :
+                            `<button class="btn btn-danger" onclick="showArchiveModal('${patient._id}')">
+                                <i class="fas fa-archive"></i>
+                                Archiver
+                            </button>`
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filtrage des patients
+        function getFilteredPatients() {
+            searchQuery = document.getElementById('searchInput').value.trim();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            return patients.filter(patient => {
+                // Recherche exacte du nom et prénom
+                const fullName = `${patient.nom} ${patient.prenom}`.toLowerCase();
+                const searchTerms = searchQuery.toLowerCase();
+                
+                // Vérifier si la recherche correspond au nom complet, au nom seul ou au prénom seul
+                const matchesSearch = searchQuery === '' || 
+                    fullName.includes(searchTerms) ||
+                    patient.nom.toLowerCase().includes(searchTerms) ||
+                    patient.prenom.toLowerCase().includes(searchTerms);
+                
+                const matchesStatus = statusFilter === 'all' || 
+                    (statusFilter === 'active' && !patient.archived) ||
+                    (statusFilter === 'archived' && patient.archived);
+
+                return matchesSearch && matchesStatus;
+            });
+        }
+
+        // Gestion du filtre
+        function filterPatients() {
+            const searchInput = document.getElementById('searchInput');
+            const searchValue = searchInput.value.trim();
+            
+            // Mettre à jour l'affichage
+            renderPatients();
+        }
+
+        // Fonctions de navigation
+        function viewPatient(id) {
+            window.location.href = `patient-details.html?id=${id}`;
+        }
+
+        function editPatient(id) {
+            window.location.href = `patient-edit.html?id=${id}`;
+        }
+
+        function viewVersions(id) {
+            window.location.href = `patient-versions.html?id=${id}`;
+        }
+
+        // Génération du PDF
+        async function generatePDF(id) {
+            try {
+                const response = await fetch(`/api/patients/${id}/pdf`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/pdf',
+                        'Include-Document': 'true'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la génération du PDF');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                
+                const patient = patients.find(p => p._id === id);
+                const fileName = `patient_${patient.nom}_${patient.prenom}_${new Date().toISOString().split('T')[0]}.pdf`;
+                
+                link.setAttribute('download', fileName);
+                document.body.appendChild(link);
+                link.click();
+                
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(link);
+                
+                showSuccess('PDF généré avec succès');
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Impossible de générer le PDF');
+            }
+        }
+
+        // Archivage et restauration
+        async function showArchiveModal(id) {
+            if (confirm('Êtes-vous sûr de vouloir archiver ce patient ?')) {
+                try {
+                    const response = await fetch(`/api/patients/${id}/archive`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    if (response.ok) {
+                        const patient = patients.find(p => p._id === id);
+                        if (patient) {
+                            patient.archived = true;
+                            renderPatients();
+                        }
+                        showSuccess('Patient archivé avec succès');
+                    } else {
+                        throw new Error('Erreur lors de l\'archivage');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    showError('Impossible d\'archiver le patient');
+                }
+            }
+        }
+
+        async function restorePatient(id) {
+            try {
+                const response = await fetch(`/api/patients/${id}/restore`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const patient = patients.find(p => p._id === id);
+                    if (patient) {
+                        patient.archived = false;
+                        renderPatients();
+                    }
+                    showSuccess('Patient restauré avec succès');
+                } else {
+                    throw new Error('Erreur lors de la restauration');
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                showError('Impossible de restaurer le patient');
+            }
+        }
+
+        // Notifications
+        function showSuccess(message) {
+            alert(message);
+        }
+
+        function showError(message) {
+            alert(message);
+        }
+
+        // Upload de document
+        async function uploadDocument(id) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,.pdf';
+            
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const formData = new FormData();
+                formData.append('document', file);
+
+                try {
+                    const response = await fetch(`/api/patients/${id}/document`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        showSuccess('Document ajouté avec succès');
+                        // Recharger les patients pour mettre à jour l'affichage
+                        loadPatients();
+                    } else {
+                        throw new Error('Erreur lors de l\'upload du document');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    showError('Impossible d\'ajouter le document');
+                }
+            };
+
+            input.click();
+        }
+
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', loadPatients);
+    </script>
+</body>
+</html> 

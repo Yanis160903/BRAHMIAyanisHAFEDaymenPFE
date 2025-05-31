@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails de la Version - Pharmacie Clinique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-light: #8B85FF;
+            --primary-dark: #5A52D5;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --border-radius: 16px;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1.2rem 2.5rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .navbar-brand i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-content {
+            margin-top: 90px;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.6rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .version-details {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .section:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title i {
+            font-size: 1.8rem;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .data-item {
+            background: var(--card-bg);
+            padding: 1.2rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .data-item.modified {
+            background: #fff5f5;
+            border-left: 4px solid #dc3545;
+            padding: 1.5rem;
+        }
+
+        .data-item.modified .data-label {
+            color: #dc3545;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .data-item.modified .data-label::before {
+            content: '\f303';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 8px;
+            color: #dc3545;
+        }
+
+        .value-comparison {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .value-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .value-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .value-label i {
+            font-size: 1rem;
+        }
+
+        .old-value, .new-value {
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .old-value {
+            background-color: #fff5f5;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            position: relative;
+        }
+
+        .old-value::before {
+            content: 'Ancienne valeur';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            background: #fff5f5;
+            padding: 0 0.5rem;
+            font-size: 0.8rem;
+            color: #dc3545;
+        }
+
+        .new-value {
+            background-color: #f0fff4;
+            color: #38a169;
+            border: 1px solid #38a169;
+            position: relative;
+        }
+
+        .new-value::before {
+            content: 'Nouvelle valeur';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            background: #f0fff4;
+            padding: 0 0.5rem;
+            font-size: 0.8rem;
+            color: #38a169;
+        }
+
+        .unchanged-value {
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .data-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .data-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .data-value {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fas fa-clinic-medical"></i>
+            Pharmacie Clinique
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>Détails de la Version</h1>
+                <a href="javascript:history.back()" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+            </div>
+
+            <div class="version-details" id="versionDetails">
+                <!-- Les détails seront ajoutés dynamiquement ici -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer l'ID du patient et la date depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('id');
+        const versionDate = urlParams.get('date');
+
+        // Charger les détails de la version
+        async function loadVersionDetails() {
+            try {
+                const response = await fetch(`/api/historique/${patientId}`);
+                const versions = await response.json();
+                const version = versions.find(v => v.dateModification === versionDate);
+                
+                if (version) {
+                    renderVersionDetails(version);
+                } else {
+                    showError('Version non trouvée');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des détails:', error);
+                showError('Impossible de charger les détails de la version');
+            }
+        }
+
+        // Afficher les détails de la version
+        function renderVersionDetails(version) {
+            const details = document.getElementById('versionDetails');
+            
+            // Créer les sections pour chaque catégorie de données
+            const sections = {
+                'Informations Générales': [
+                    'nom', 'prenom', 'dateNaissance', 'sexe', 'adresse', 'telephone', 
+                    'email', 'medecinTraitant', 'numeroDossier', 'profession', 
+                    'assurance', 'dateEntretien'
+                ],
+                'Antécédents': [
+                    'tValue', 'nValue', 'mValue', 'protocole', 'antecedentsMedicaux',
+                    'antecedentsChirurgicaux', 'antecedentsFamiliaux', 'hygieneVie',
+                    'alertes', 'habitudesToxiques'
+                ],
+                'Médicaments': [
+                    'allergieMedi', 'medicament', 'automedication', 'medicamentAutomed',
+                    'complements', 'complement', 'phytotherapie', 'phytotherapieDetails',
+                    'vaccination', 'vaccinsEffectues', 'atb', 'antibiotiques'
+                ],
+                'Prescription': [
+                    'indication', 'medication', 'posologie', 'debut', 'fin', 'commentaire'
+                ],
+                'Suivi': [
+                    'date_suivi', 'type_examen', 'resultat_analyse', 'unite_mesure',
+                    'effets_secondaires', 'poids_surface', 'pression_arterielle',
+                    'resultat_imagerie'
+                ],
+                'Évaluation': [
+                    'dateEval', 'typePLM', 'sousType', 'medicament', 'intervention',
+                    'objectifs', 'suivi'
+                ]
+            };
+
+            let html = `
+                <div class="section">
+                    <h2 class="section-title">
+                        <i class="fas fa-history"></i>
+                        Informations de la Version
+                    </h2>
+                    <div class="data-grid">
+                        <div class="data-item">
+                            <div class="data-label">Date de modification</div>
+                            <div class="data-value">${new Date(version.dateModification).toLocaleString('fr-FR')}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Type de modification</div>
+                            <div class="data-value">${version.typeDonnee}</div>
+                        </div>
+                        <div class="data-item">
+                            <div class="data-label">Champs modifiés</div>
+                            <div class="data-value">${version.modifications ? 
+                                version.modifications.map(field => formatFieldName(field)).join(', ') : 
+                                formatFieldName(version.champ)}</div>
+                        </div>
+                    </div>
+                </div>`;
+
+            // Générer les sections pour chaque catégorie
+            for (const [category, fields] of Object.entries(sections)) {
+                html += `
+                    <div class="section">
+                        <h2 class="section-title">
+                            <i class="fas fa-folder"></i>
+                            ${category}
+                        </h2>
+                        <div class="data-grid">`;
+
+                fields.forEach(field => {
+                    const value = version[field];
+                    if (value !== undefined) {
+                        const isModified = version.modifications ? 
+                            version.modifications.includes(field) : 
+                            version.champ === field;
+                        
+                        html += `
+                            <div class="data-item ${isModified ? 'modified' : ''}">
+                                <div class="data-label">${formatFieldName(field)}</div>
+                                <div class="data-value">
+                                    ${isModified ? 
+                                        `<div class="value-comparison">
+                                            <div class="value-column">
+                                                <div class="old-value">${version.anciennesValeurs ? 
+                                                    version.anciennesValeurs[field] || 'Non spécifié' : 
+                                                    version.ancienneValeur || 'Non spécifié'}</div>
+                                            </div>
+                                            <div class="value-column">
+                                                <div class="new-value">${value || 'Non spécifié'}</div>
+                                            </div>
+                                        </div>` :
+                                        `<div class="unchanged-value">${value || 'Non spécifié'}</div>`
+                                    }
+                                </div>
+                            </div>`;
+                    }
+                });
+
+                html += `
+                        </div>
+                    </div>`;
+            }
+
+            details.innerHTML = html;
+        }
+
+        // Fonction pour formater les noms des champs
+        function formatFieldName(field) {
+            const fieldNames = {
+                // Informations générales
+                nom: 'Nom',
+                prenom: 'Prénom',
+                dateNaissance: 'Date de naissance',
+                sexe: 'Sexe',
+                adresse: 'Adresse',
+                telephone: 'Téléphone',
+                email: 'Email',
+                medecinTraitant: 'Médecin traitant',
+                numeroDossier: 'Numéro de dossier',
+                profession: 'Profession',
+                assurance: 'Assurance',
+                dateEntretien: 'Date d\'entretien',
+
+                // Antécédents
+                tValue: 'T Value',
+                nValue: 'N Value',
+                mValue: 'M Value',
+                protocole: 'Protocole',
+                antecedentsMedicaux: 'Antécédents médicaux',
+                antecedentsChirurgicaux: 'Antécédents chirurgicaux',
+                antecedentsFamiliaux: 'Antécédents familiaux',
+                hygieneVie: 'Hygiène de vie',
+                alertes: 'Alertes',
+                habitudesToxiques: 'Habitudes toxiques',
+
+                // Médicaments
+                allergieMedi: 'Allergie médicamenteuse',
+                medicament: 'Médicament',
+                automedication: 'Automédication',
+                medicamentAutomed: 'Médicament en automédication',
+                complements: 'Compléments',
+                complement: 'Détails des compléments',
+                phytotherapie: 'Phytothérapie',
+                phytotherapieDetails: 'Détails de la phytothérapie',
+                vaccination: 'Vaccination',
+                vaccinsEffectues: 'Vaccins effectués',
+                atb: 'Antibiotiques',
+                antibiotiques: 'Détails des antibiotiques',
+
+                // Prescription
+                indication: 'Indication',
+                medication: 'Médication',
+                posologie: 'Posologie',
+                debut: 'Date de début',
+                fin: 'Date de fin',
+                commentaire: 'Commentaire',
+
+                // Suivi
+                date_suivi: 'Date de suivi',
+                type_examen: 'Type d\'examen',
+                resultat_analyse: 'Résultat d\'analyse',
+                unite_mesure: 'Unité de mesure',
+                effets_secondaires: 'Effets secondaires',
+                poids_surface: 'Poids/Surface',
+                pression_arterielle: 'Pression artérielle',
+                resultat_imagerie: 'Résultat d\'imagerie',
+
+                // Évaluation
+                dateEval: 'Date d\'évaluation',
+                typePLM: 'Type PLM',
+                sousType: 'Sous-type',
+                medicament: 'Médicament',
+                intervention: 'Intervention',
+                objectifs: 'Objectifs',
+                suivi: 'Suivi'
+            };
+            return fieldNames[field] || field;
+        }
+
+        // Notifications
+        function showError(message) {
+            alert(message);
+        }
+
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', loadVersionDetails);
+    </script>
+</body>
+</html> 

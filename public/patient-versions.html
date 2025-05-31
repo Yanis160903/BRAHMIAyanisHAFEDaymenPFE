@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Versions - Pharmacie Clinique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-light: #8B85FF;
+            --primary-dark: #5A52D5;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --border-radius: 16px;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1.2rem 2.5rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .navbar-brand i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .main-content {
+            margin-top: 90px;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.6rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+            text-decoration: none;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .versions-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .version-card {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .version-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .version-date {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .version-date i {
+            color: var(--primary-color);
+        }
+
+        .version-type {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary-color);
+        }
+
+        .changes-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .change-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .change-item:hover {
+            background: rgba(108, 99, 255, 0.05);
+        }
+
+        .change-field {
+            font-weight: 600;
+            color: var(--primary-color);
+            min-width: 150px;
+        }
+
+        .change-values {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .change-value-item {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .value-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-light);
+            min-width: 100px;
+        }
+
+        .old-value, .new-value {
+            flex: 1;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: var(--glass-bg);
+        }
+
+        .old-value {
+            color: var(--danger-color);
+            text-decoration: line-through;
+            border: 1px solid var(--danger-color);
+        }
+
+        .new-value {
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .no-versions {
+            text-align: center;
+            padding: 5rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            font-size: 1.3rem;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+        }
+
+        .no-versions i {
+            font-size: 4rem;
+            color: var(--primary-color);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+
+            .navbar-brand i {
+                font-size: 1.6rem;
+            }
+
+            .main-content {
+                margin-top: 80px;
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .version-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .change-item {
+                flex-direction: column;
+            }
+
+            .change-field {
+                min-width: auto;
+            }
+
+            .change-values {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="navbar-brand">
+            <i class="fas fa-clinic-medical"></i>
+            Pharmacie Clinique
+        </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                <h1>Historique des Versions</h1>
+                <a href="javascript:history.back()" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour
+                </a>
+            </div>
+
+            <div class="versions-timeline" id="versionsTimeline">
+                <!-- Les versions seront ajoutées dynamiquement ici -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Récupérer l'ID du patient depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('id');
+
+        // Charger l'historique des versions
+        async function loadVersions() {
+            try {
+                const response = await fetch(`/api/historique/${patientId}`);
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status} ${response.statusText}`);
+                }
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error(`Type de contenu invalide: ${contentType}`);
+                }
+                const versions = await response.json();
+                renderVersions(versions);
+            } catch (error) {
+                console.error('Erreur détaillée:', error);
+                const timeline = document.getElementById('versionsTimeline');
+                timeline.innerHTML = `
+                    <div class="no-versions">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Erreur lors du chargement des versions</p>
+                        <p style="font-size: 0.9rem; color: var(--text-light);">${error.message}</p>
+                    </div>`;
+            }
+        }
+
+        // Afficher les versions
+        function renderVersions(versions) {
+            const timeline = document.getElementById('versionsTimeline');
+
+            if (!versions || versions.length === 0) {
+                timeline.innerHTML = `
+                    <div class="no-versions">
+                        <i class="fas fa-history"></i>
+                        <p>Aucune version précédente trouvée</p>
+                    </div>`;
+                return;
+            }
+
+            // Trier les versions par date décroissante
+            versions.sort((a, b) => new Date(b.dateModification) - new Date(a.dateModification));
+
+            timeline.innerHTML = versions.map(version => {
+                // Formater la liste des champs modifiés
+                const modifiedFields = version.modifications ? 
+                    version.modifications.map(field => formatFieldName(field)).join(', ') : 
+                    formatFieldName(version.champ);
+
+                return `
+                    <div class="version-card" onclick="viewVersionDetails('${version.dateModification}')">
+                        <div class="version-header">
+                            <div class="version-date">
+                                <i class="fas fa-clock"></i>
+                                ${new Date(version.dateModification).toLocaleString('fr-FR')}
+                            </div>
+                            <span class="version-type">${version.typeDonnee}</span>
+                        </div>
+                        <div class="changes-list">
+                            <div class="change-item">
+                                <div class="change-field">Champs modifiés</div>
+                                <div class="change-values">
+                                    ${version.modifications ? 
+                                        version.modifications.map(field => `
+                                            <div class="change-value-item">
+                                                <span class="value-label">${formatFieldName(field)}:</span>
+                                                <div class="old-value">${version.anciennesValeurs[field] || 'Non spécifié'}</div>
+                                                <div class="new-value">${version[field] || 'Non spécifié'}</div>
+                                            </div>
+                                        `).join('') :
+                                        `<div class="change-value-item">
+                                            <span class="value-label">${formatFieldName(version.champ)}:</span>
+                                            <div class="old-value">${version.ancienneValeur || 'Non spécifié'}</div>
+                                            <div class="new-value">${version[version.champ] || 'Non spécifié'}</div>
+                                        </div>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="version-preview">
+                            <i class="fas fa-chevron-right"></i>
+                            Cliquez pour voir les détails complets
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Rediriger vers la page de détails de version
+        function viewVersionDetails(date) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('id');
+            window.location.href = `patient-version-details.html?id=${patientId}&date=${date}`;
+        }
+
+        // Fonction pour formater les noms des champs
+        function formatFieldName(field) {
+            const fieldNames = {
+                // Informations générales
+                nom: 'Nom',
+                prenom: 'Prénom',
+                dateNaissance: 'Date de naissance',
+                sexe: 'Sexe',
+                adresse: 'Adresse',
+                telephone: 'Téléphone',
+                email: 'Email',
+                medecinTraitant: 'Médecin traitant',
+                numeroDossier: 'Numéro de dossier',
+                profession: 'Profession',
+                assurance: 'Assurance',
+                dateEntretien: 'Date d\'entretien',
+
+                // Antécédents
+                tValue: 'T Value',
+                nValue: 'N Value',
+                mValue: 'M Value',
+                protocole: 'Protocole',
+                antecedentsMedicaux: 'Antécédents médicaux',
+                antecedentsChirurgicaux: 'Antécédents chirurgicaux',
+                antecedentsFamiliaux: 'Antécédents familiaux',
+                hygieneVie: 'Hygiène de vie',
+                alertes: 'Alertes',
+                habitudesToxiques: 'Habitudes toxiques',
+
+                // Médicaments
+                allergieMedi: 'Allergie médicamenteuse',
+                medicament: 'Médicament',
+                automedication: 'Automédication',
+                medicamentAutomed: 'Médicament en automédication',
+                complements: 'Compléments',
+                complement: 'Détails des compléments',
+                phytotherapie: 'Phytothérapie',
+                phytotherapieDetails: 'Détails de la phytothérapie',
+                vaccination: 'Vaccination',
+                vaccinsEffectues: 'Vaccins effectués',
+                atb: 'Antibiotiques',
+                antibiotiques: 'Détails des antibiotiques',
+
+                // Prescription
+                indication: 'Indication',
+                medication: 'Médication',
+                posologie: 'Posologie',
+                debut: 'Date de début',
+                fin: 'Date de fin',
+                commentaire: 'Commentaire',
+
+                // Suivi
+                date_suivi: 'Date de suivi',
+                type_examen: 'Type d\'examen',
+                resultat_analyse: 'Résultat d\'analyse',
+                unite_mesure: 'Unité de mesure',
+                effets_secondaires: 'Effets secondaires',
+                poids_surface: 'Poids/Surface',
+                pression_arterielle: 'Pression artérielle',
+                resultat_imagerie: 'Résultat d\'imagerie',
+
+                // Évaluation
+                dateEval: 'Date d\'évaluation',
+                typePLM: 'Type PLM',
+                sousType: 'Sous-type',
+                medicament: 'Médicament',
+                intervention: 'Intervention',
+                objectifs: 'Objectifs',
+                suivi: 'Suivi'
+            };
+            return fieldNames[field] || field;
+        }
+
+        // Notifications
+        function showError(message) {
+            alert(message);
+        }
+
+        // Chargement initial
+        document.addEventListener('DOMContentLoaded', loadVersions);
+    </script>
+</body>
+</html> 

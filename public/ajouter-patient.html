@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajouter un Patient - Pharmacie Clinique</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="form-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-light: #8B85FF;
+            --primary-dark: #5A52D5;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --border-radius: 16px;
+            --spacing: 1rem;
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --input-focus-ring: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1.2rem 2.5rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .navbar:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover::after {
+            transform: translateX(0);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .logo:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-links a:hover {
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-links a.active:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 90px auto 0;
+            padding: 2rem;
+        }
+
+        .form-container {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(108, 99, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .form-container:hover::before {
+            opacity: 1;
+        }
+
+        .form-container:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .form-container h1 {
+            font-size: 2.6rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(108, 99, 255, 0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* Étapes de progression */
+        .form-progress {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            position: relative;
+            width: 16.66%;
+        }
+
+        .step-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .step-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-align: center;
+            font-weight: 500;
+            width: 100%;
+            padding: 0 0.5rem;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.completed .step-number {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .progress-step.active .step-label,
+        .progress-step.completed .step-label {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .form-step {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.1);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .form-step:hover {
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .form-step h2 {
+            color: var(--primary-color);
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .form-step h2 i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 0.5rem;
+        }
+
+        .form-group {
+            background: var(--glass-bg);
+            padding: 1.2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(108, 99, 255, 0.05);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-group::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .form-group:hover::after {
+            transform: scaleX(1);
+        }
+
+        .form-group:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.1);
+            border-color: var(--primary-light);
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            transition: var(--transition);
+        }
+
+        .form-group label i {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover label i {
+            transform: scale(1.1) rotate(5deg);
+            color: var(--primary-light);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            border-radius: 8px;
+            background: var(--card-bg);
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            min-height: 2.5rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: var(--input-focus-ring);
+            transform: translateY(-1px);
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group input:required,
+        .form-group select:required,
+        .form-group textarea:required {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .form-group input:invalid,
+        .form-group select:invalid,
+        .form-group textarea:invalid {
+            border-color: var(--danger-color);
+            animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .dossier-input-group {
+            display: flex;
+            gap: 1rem;
+            flex: 1;
+        }
+
+        .dossier-input-group input {
+            flex: 1;
+        }
+
+        .dossier-input-group .btn {
+            padding: 0.8rem 1.2rem;
+            min-width: auto;
+            white-space: nowrap;
+        }
+
+        .dossier-input-group .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .dossier-input-group input.success {
+            border-color: var(--success-color);
+            background-color: rgba(72, 187, 120, 0.1);
+            animation: successPulse 2s ease-out;
+        }
+
+        @keyframes successPulse {
+            0% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(72, 187, 120, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
+        }
+
+        .form-group label::after {
+            content: ' *';
+            color: var(--primary-color);
+        }
+
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 1rem;
+            min-width: 120px;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover::before {
+            transform: translateX(0);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.3);
+        }
+
+        .btn.secondary {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 2px solid rgba(108, 99, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+        }
+
+        .btn.primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+        }
+
+        .btn.secondary:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo i {
+                font-size: 1.6rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0.8rem;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-container h1 {
+                font-size: 2rem;
+            }
+
+            .form-progress {
+                padding: 1.5rem;
+            }
+
+            .step-label {
+                font-size: 0.75rem;
+                padding: 0 0.2rem;
+            }
+
+            .step-number {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .form-navigation {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 0.7rem 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-clinic-medical"></i>
+            <span>Pharmacie Clinique</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="liste-patients.html" class="active"><i class="fas fa-users"></i> Patients</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="form-container">
+            <h1>Ajouter un Nouveau Patient</h1>
+            
+            <div class="form-progress">
+                <div class="progress-steps">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <span class="step-label">Informations Générales</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-number">2</div>
+                        <span class="step-label">Antécédents</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-number">3</div>
+                        <span class="step-label">Médicaments</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-number">4</div>
+                        <span class="step-label">Prescription</span>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <div class="step-number">5</div>
+                        <span class="step-label">Suivi</span>
+                    </div>
+                    <div class="progress-step" data-step="6">
+                        <div class="step-number">6</div>
+                        <span class="step-label">Évaluation</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="patientForm" class="multi-step-form">
+                <!-- Étape 1: Informations Générales -->
+                <div class="form-step active" data-step="1">
+                    <h2>🗂 Informations Générales</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="dateEntretien">
+                                <i class="fas fa-calendar-alt"></i>
+                                Date d'Entretien
+                            </label>
+                            <input type="date" id="dateEntretien" name="dateEntretien" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="numeroDossier">
+                                <i class="fas fa-folder"></i>
+                                Numéro de Dossier
+                            </label>
+                            <div class="dossier-input-group">
+                                <input type="text" id="numeroDossier" name="numeroDossier" readonly>
+                                <button type="button" class="btn secondary" id="generateDossierBtn">
+                                    <i class="fas fa-sync-alt"></i> Générer
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="nom">
+                                <i class="fas fa-user"></i>
+                                Nom
+                            </label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="prenom">
+                                <i class="fas fa-user"></i>
+                                Prénom
+                            </label>
+                            <input type="text" id="prenom" name="prenom" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dateNaissance">
+                                <i class="fas fa-birthday-cake"></i>
+                                Date de Naissance
+                            </label>
+                            <input type="date" id="dateNaissance" name="dateNaissance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="telephone">
+                                <i class="fas fa-phone"></i>
+                                Téléphone
+                            </label>
+                            <input type="tel" id="telephone" name="telephone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profession">
+                                <i class="fas fa-briefcase"></i>
+                                Profession
+                            </label>
+                            <input type="text" id="profession" name="profession" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="assurance">
+                                <i class="fas fa-shield-alt"></i>
+                                Assurance
+                            </label>
+                            <input type="text" id="assurance" name="assurance" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="adresse">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Adresse
+                            </label>
+                            <textarea id="adresse" name="adresse" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="medecinTraitant">
+                                <i class="fas fa-user-md"></i>
+                                Médecin Traitant
+                            </label>
+                            <input type="text" id="medecinTraitant" name="medecinTraitant" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 2: Antécédents Médicaux -->
+                <div class="form-step" data-step="2">
+                    <h2>🏥 Antécédents Médicaux et Habitudes</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="tValue">
+                                <i class="fas fa-chart-line"></i>
+                                T Value
+                            </label>
+                            <input type="text" id="tValue" name="tValue" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="nValue">
+                                <i class="fas fa-chart-line"></i>
+                                N Value
+                            </label>
+                            <input type="text" id="nValue" name="nValue" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="mValue">
+                                <i class="fas fa-chart-line"></i>
+                                M Value
+                            </label>
+                            <input type="text" id="mValue" name="mValue" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="protocole">
+                                <i class="fas fa-clipboard-list"></i>
+                                Protocole
+                            </label>
+                            <input type="text" id="protocole" name="protocole" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsMedicaux">
+                                <i class="fas fa-notes-medical"></i>
+                                Antécédents Médicaux
+                            </label>
+                            <textarea id="antecedentsMedicaux" name="antecedentsMedicaux" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsChirurgicaux">
+                                <i class="fas fa-procedures"></i>
+                                Antécédents Chirurgicaux
+                            </label>
+                            <textarea id="antecedentsChirurgicaux" name="antecedentsChirurgicaux" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="antecedentsFamiliaux">
+                                <i class="fas fa-users"></i>
+                                Antécédents Familiaux
+                            </label>
+                            <textarea id="antecedentsFamiliaux" name="antecedentsFamiliaux" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="hygieneVie">
+                                <i class="fas fa-heartbeat"></i>
+                                Hygiène de Vie
+                            </label>
+                            <textarea id="hygieneVie" name="hygieneVie" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="alertes">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Alertes
+                            </label>
+                            <textarea id="alertes" name="alertes" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="habitudesToxiques">
+                                <i class="fas fa-smoking"></i>
+                                Habitudes Toxiques
+                            </label>
+                            <textarea id="habitudesToxiques" name="habitudesToxiques" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 3: Médicaments -->
+                <div class="form-step" data-step="3">
+                    <h2>💊 Médicaments et Compléments</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="allergieMedi">
+                                <i class="fas fa-allergies"></i>
+                                Allergies Médicamenteuses
+                            </label>
+                            <select id="allergieMedi" name="allergieMedi" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="medicamentGroup" style="display: none;">
+                            <label for="medicament">
+                                <i class="fas fa-pills"></i>
+                                Médicaments
+                            </label>
+                            <input type="text" id="medicament" name="medicament">
+                        </div>
+                        <div class="form-group">
+                            <label for="automedication">
+                                <i class="fas fa-capsules"></i>
+                                Automédication
+                            </label>
+                            <select id="automedication" name="automedication" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="medicamentAutomedGroup" style="display: none;">
+                            <label for="medicamentAutomed">
+                                <i class="fas fa-pills"></i>
+                                Médicaments en Automédication
+                            </label>
+                            <input type="text" id="medicamentAutomed" name="medicamentAutomed">
+                        </div>
+                        <div class="form-group">
+                            <label for="complements">
+                                <i class="fas fa-plus-circle"></i>
+                                Compléments
+                            </label>
+                            <select id="complements" name="complements" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="complementGroup" style="display: none;">
+                            <label for="complement">
+                                <i class="fas fa-plus-circle"></i>
+                                Détails des Compléments
+                            </label>
+                            <input type="text" id="complement" name="complement">
+                        </div>
+                        <div class="form-group">
+                            <label for="phytotherapie">
+                                <i class="fas fa-leaf"></i>
+                                Phytothérapie
+                            </label>
+                            <select id="phytotherapie" name="phytotherapie" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="phytotherapieDetailsGroup" style="display: none;">
+                            <label for="phytotherapieDetails">
+                                <i class="fas fa-leaf"></i>
+                                Détails Phytothérapie
+                            </label>
+                            <input type="text" id="phytotherapieDetails" name="phytotherapieDetails">
+                        </div>
+                        <div class="form-group">
+                            <label for="vaccination">
+                                <i class="fas fa-syringe"></i>
+                                Vaccination
+                            </label>
+                            <select id="vaccination" name="vaccination" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="vaccinsEffectuesGroup" style="display: none;">
+                            <label for="vaccinsEffectues">
+                                <i class="fas fa-syringe"></i>
+                                Vaccins Effectués
+                            </label>
+                            <input type="text" id="vaccinsEffectues" name="vaccinsEffectues">
+                        </div>
+                        <div class="form-group">
+                            <label for="atb">
+                                <i class="fas fa-bacteria"></i>
+                                Antibiotiques
+                            </label>
+                            <select id="atb" name="atb" required>
+                                <option value="non">Non</option>
+                                <option value="oui">Oui</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="antibiotiquesGroup" style="display: none;">
+                            <label for="antibiotiques">
+                                <i class="fas fa-bacteria"></i>
+                                Antibiotiques
+                            </label>
+                            <input type="text" id="antibiotiques" name="antibiotiques">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 4: Prescription -->
+                <div class="form-step" data-step="4">
+                    <h2>🧾 Prescription Médicale</h2>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="indication">
+                                <i class="fas fa-clipboard-check"></i>
+                                Indication
+                            </label>
+                            <textarea id="indication" name="indication" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="medication">
+                                <i class="fas fa-prescription-bottle-medical"></i>
+                                Médication
+                            </label>
+                            <textarea id="medication" name="medication" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="posologie">
+                                <i class="fas fa-clock"></i>
+                                Posologie
+                            </label>
+                            <textarea id="posologie" name="posologie" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="debut">
+                                <i class="fas fa-calendar-plus"></i>
+                                Date de Début
+                            </label>
+                            <input type="date" id="debut" name="debut" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fin">
+                                <i class="fas fa-calendar-minus"></i>
+                                Date de Fin
+                            </label>
+                            <input type="date" id="fin" name="fin" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="commentaire">
+                                <i class="fas fa-comment-medical"></i>
+                                Commentaire
+                            </label>
+                            <textarea id="commentaire" name="commentaire" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 5: Suivi -->
+                <div class="form-step" data-step="5">
+                    <h2>📋 Suivi Médical</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="date_suivi">
+                                <i class="fas fa-calendar-check"></i>
+                                Date de Suivi
+                            </label>
+                            <input type="date" id="date_suivi" name="date_suivi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="type_examen">
+                                <i class="fas fa-stethoscope"></i>
+                                Type d'Examen
+                            </label>
+                            <input type="text" id="type_examen" name="type_examen" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resultat_analyse">
+                                <i class="fas fa-vial"></i>
+                                Résultat d'Analyse
+                            </label>
+                            <input type="text" id="resultat_analyse" name="resultat_analyse" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="unite_mesure">
+                                <i class="fas fa-ruler"></i>
+                                Unité de Mesure
+                            </label>
+                            <input type="text" id="unite_mesure" name="unite_mesure" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="effets_secondaires">
+                                <i class="fas fa-exclamation-circle"></i>
+                                Effets Secondaires
+                            </label>
+                            <textarea id="effets_secondaires" name="effets_secondaires" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="poids_surface">
+                                <i class="fas fa-weight"></i>
+                                Poids/Surface
+                            </label>
+                            <input type="text" id="poids_surface" name="poids_surface" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pression_arterielle">
+                                <i class="fas fa-heartbeat"></i>
+                                Pression Artérielle
+                            </label>
+                            <input type="text" id="pression_arterielle" name="pression_arterielle" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="resultat_imagerie">
+                                <i class="fas fa-x-ray"></i>
+                                Résultat d'Imagerie
+                            </label>
+                            <textarea id="resultat_imagerie" name="resultat_imagerie" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Étape 6: Évaluation -->
+                <div class="form-step" data-step="6">
+                    <h2><i class="fas fa-clipboard-check"></i> Évaluation Médicale</h2>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="dateEval">Date d'Évaluation</label>
+                            <input type="date" id="dateEval" name="dateEval" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="typePLM">Type PLM</label>
+                            <select id="typePLM" name="typePLM" required>
+                                <option value="Indication">Indication</option>
+                                <option value="Efficacite">Efficacité</option>
+                                <option value="Securite">Sécurité</option>
+                                <option value="Adherence">Adhérence</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="sousType">Sous-Type</label>
+                            <input type="text" id="sousType" name="sousType" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="medicament">Médicament</label>
+                            <input type="text" id="medicament" name="medicament" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="intervention">Intervention</label>
+                            <textarea id="intervention" name="intervention" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="objectifs">Objectifs</label>
+                            <textarea id="objectifs" name="objectifs" required></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="suivi">Suivi</label>
+                            <textarea id="suivi" name="suivi" required></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-navigation">
+                    <button type="button" class="btn secondary" id="prevBtn" style="display: none;">Précédent</button>
+                    <button type="button" class="btn primary" id="nextBtn">Suivant</button>
+                    <button type="submit" class="btn primary" id="submitBtn" style="display: none;">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Pharmacie Clinique. Tous droits réservés.</p>
+    </footer>
+
+    <script src="form-script.js"></script>
+    <script src="dossier-script.js"></script>
+    <script>
+        // Script pour le défilement automatique lors du remplissage
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('change', function() {
+                const formGroup = this.closest('.form-group');
+                if (formGroup) {
+                    formGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        // Gestion des champs conditionnels
+        document.getElementById('allergieMedi').addEventListener('change', function() {
+            const medicamentGroup = document.getElementById('medicamentGroup');
+            medicamentGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        document.getElementById('automedication').addEventListener('change', function() {
+            const medicamentAutomedGroup = document.getElementById('medicamentAutomedGroup');
+            medicamentAutomedGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        document.getElementById('complements').addEventListener('change', function() {
+            const complementGroup = document.getElementById('complementGroup');
+            complementGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        document.getElementById('phytotherapie').addEventListener('change', function() {
+            const phytotherapieDetailsGroup = document.getElementById('phytotherapieDetailsGroup');
+            phytotherapieDetailsGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        document.getElementById('vaccination').addEventListener('change', function() {
+            const vaccinsEffectuesGroup = document.getElementById('vaccinsEffectuesGroup');
+            vaccinsEffectuesGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        document.getElementById('atb').addEventListener('change', function() {
+            const antibiotiquesGroup = document.getElementById('antibiotiquesGroup');
+            antibiotiquesGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+        });
+
+        // Gestion de la soumission du formulaire
+        document.getElementById('patientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Vérification de tous les champs requis
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.style.borderColor = 'red';
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+
+            if (!isValid) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+
+            // Récupération de toutes les données du formulaire
+            const formData = new FormData(this);
+            const formDataObject = {};
+
+            // Conversion des données du formulaire en objet
+            for (let [key, value] of formData.entries()) {
+                formDataObject[key] = value;
+            }
+
+            // Vérification spécifique des champs de la 6ème étape
+            const step6Fields = {
+                dateEval: document.getElementById('dateEval').value,
+                typePLM: document.getElementById('typePLM').value,
+                sousType: document.getElementById('sousType').value,
+                medicament: document.getElementById('medicament').value,
+                intervention: document.getElementById('intervention').value,
+                objectifs: document.getElementById('objectifs').value,
+                suivi: document.getElementById('suivi').value
+            };
+
+            // Vérification que tous les champs de la 6ème étape sont remplis
+            const step6Valid = Object.values(step6Fields).every(value => value.trim() !== '');
+            
+            if (!step6Valid) {
+                alert('Veuillez remplir tous les champs de l\'étape d\'évaluation');
+                return;
+            }
+
+            // Ajout des données de la 6ème étape à l'objet formDataObject
+            Object.assign(formDataObject, step6Fields);
+
+            // Envoi des données (à adapter selon votre backend)
+            console.log('Formulaire soumis avec succès', formDataObject);
+            
+            // Ici, vous pouvez ajouter le code pour envoyer les données à votre serveur
+            // Par exemple :
+            // fetch('/api/patients', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(formDataObject)
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     console.log('Succès:', data);
+            //     alert('Patient enregistré avec succès!');
+            // })
+            // .catch((error) => {
+            //     console.error('Erreur:', error);
+            //     alert('Erreur lors de l\'enregistrement du patient');
+            // });
+        });
+
+        // Gestion du défilement lors du passage entre les étapes
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            // Défilement vers le haut avec animation
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            // Défilement vers le haut avec animation
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Initialisation des champs conditionnels au chargement de la page
+        window.addEventListener('load', function() {
+            // Déclencher les événements change pour initialiser l'état des champs conditionnels
+            document.getElementById('allergieMedi').dispatchEvent(new Event('change'));
+            document.getElementById('automedication').dispatchEvent(new Event('change'));
+            document.getElementById('complements').dispatchEvent(new Event('change'));
+            document.getElementById('phytotherapie').dispatchEvent(new Event('change'));
+            document.getElementById('vaccination').dispatchEvent(new Event('change'));
+            document.getElementById('atb').dispatchEvent(new Event('change'));
+        });
+    </script>
+</body>
+</html> 
