@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails du Patient - Pharmacie Clinique</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -81,7 +83,8 @@
             border-radius: 8px;
         }
 
-        .nav-links a:hover, .nav-links a.active {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--primary-color);
             background: rgba(108, 99, 255, 0.1);
         }
@@ -107,6 +110,39 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .date-time {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .btn.small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .btn.small:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
         }
 
         .details-header h1 {
@@ -328,6 +364,7 @@
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="logo">
@@ -343,7 +380,16 @@
     <main class="container">
         <div class="details-container">
             <div class="details-header">
-                <h1>Détails du Patient</h1>
+                <div class="header-left">
+                    <h1>Détails du Patient</h1>
+                    <div class="date-time">
+                        <span id="currentDateTime"></span>
+                        <button class="btn small"
+                            onclick="window.location.href='patient-versions.html?id=' + new URLSearchParams(window.location.search).get('id')">
+                            <i class="fas fa-history"></i> Historique
+                        </button>
+                    </div>
+                </div>
                 <div class="action-buttons">
                     <button class="btn secondary" onclick="window.location.href='liste-patients.html'">
                         <i class="fas fa-arrow-left"></i> Retour
@@ -635,4 +681,5 @@
 
     <script src="details-script.js"></script>
 </body>
-</html> 
+
+</html>

@@ -6,7 +6,13 @@ const patientId = urlParams.get('id');
 function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('fr-FR');
+    return date.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 }
 
 // Fonction pour formater les noms de champs
@@ -34,39 +40,16 @@ function displayHistorique(historique) {
     // Trier l'historique par date (du plus récent au plus ancien)
     historique.sort((a, b) => new Date(b.dateModification) - new Date(a.dateModification));
 
-    // Créer un tableau pour stocker toutes les modifications individuelles
-    let allModifications = [];
-
     historique.forEach(entry => {
-        // Si l'entrée contient plusieurs champs modifiés, les séparer
-        if (typeof entry.champ === 'object') {
-            Object.entries(entry.champ).forEach(([field, value]) => {
-                allModifications.push({
-                    dateModification: entry.dateModification,
-                    champ: field,
-                    ancienneValeur: entry.ancienneValeur[field],
-                    nouvelleValeur: entry.nouvelleValeur[field],
-                    utilisateur: entry.utilisateur
-                });
-            });
-        } else {
-            allModifications.push(entry);
-        }
-    });
-
-    // Trier à nouveau par date
-    allModifications.sort((a, b) => new Date(b.dateModification) - new Date(a.dateModification));
-
-    allModifications.forEach(entry => {
         const row = document.createElement('tr');
         const dateModification = new Date(entry.dateModification);
 
         // Formater la valeur avant/après pour une meilleure lisibilité
         const formatValue = (value) => {
-            if (value === null || value === undefined || value === '') return '-';
+            if (value === null || value === undefined || value === '') return 'Non spécifié';
             if (typeof value === 'boolean') return value ? 'Oui' : 'Non';
             if (value instanceof Date) return formatDate(value);
-            return value.toString();
+            return value.toString().trim();
         };
 
         row.innerHTML = `

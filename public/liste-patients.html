@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste des Patients - Pharmacie Clinique</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -49,7 +51,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
             pointer-events: none;
@@ -237,34 +239,9 @@
 
         .filters {
             display: flex;
-            gap: 1.2rem;
+            gap: 2rem;
             margin-bottom: 2.5rem;
-            padding: 1.8rem;
-            background: var(--glass-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(108, 99, 255, 0.1);
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
             flex-wrap: wrap;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .filters::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(139, 133, 255, 0.05));
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .filters:hover::before {
-            opacity: 1;
         }
 
         .search-container {
@@ -272,10 +249,22 @@
             min-width: 300px;
             position: relative;
             transition: var(--transition);
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.8rem;
         }
 
-        .search-container:focus-within {
-            transform: translateY(-2px);
+        .status-filter-container {
+            min-width: 220px;
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.8rem;
         }
 
         .search-input {
@@ -672,6 +661,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -748,8 +738,146 @@
                 gap: 1rem;
             }
         }
+
+        /* Styles pour le modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--glass-bg);
+            margin: 15% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--danger-color);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-body p {
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #718096, #A0AEC0);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Styles pour les notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            background: var(--glass-bg);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            z-index: 1100;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success-color);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .notification i {
+            font-size: 1.2rem;
+        }
+
+        .notification.success i {
+            color: var(--success-color);
+        }
+
+        .notification.error i {
+            color: var(--danger-color);
+        }
+
+        .notification span {
+            color: var(--text-color);
+            font-weight: 500;
+        }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -777,17 +905,38 @@
             <div class="filters">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un patient..." oninput="filterPatients()">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un patient..."
+                        oninput="filterPatients()">
                 </div>
-                <select id="statusFilter" onchange="filterPatients()">
-                    <option value="all">Tous les patients</option>
-                    <option value="active">Patients actifs</option>
-                    <option value="archived">Patients archivés</option>
-                </select>
+                <div class="status-filter-container">
+                    <select id="statusFilter" onchange="filterPatients()">
+                        <option value="all">Tous les patients</option>
+                        <option value="active">Patients actifs</option>
+                        <option value="archived">Patients archivés</option>
+                    </select>
+                </div>
             </div>
 
             <div class="patients-grid" id="patientsGrid">
                 <!-- Les patients seront ajoutés dynamiquement ici -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'archivage -->
+    <div id="archiveModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmer l'archivage</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir archiver le patient <span id="patientName"></span> ?</p>
+                <p>Cette action peut être annulée ultérieurement.</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelArchive" class="btn btn-secondary">Annuler</button>
+                <button id="confirmArchive" class="btn btn-danger">Archiver</button>
             </div>
         </div>
     </div>
@@ -881,16 +1030,16 @@
                             <i class="fas fa-file-upload"></i>
                             Ajouter Document
                         </button>
-                        ${patient.archived ? 
-                            `<button class="btn btn-primary" onclick="restorePatient('${patient._id}')">
+                        ${patient.archived ?
+                    `<button class="btn btn-primary" onclick="restorePatient('${patient._id}')">
                                 <i class="fas fa-undo"></i>
                                 Restaurer
                             </button>` :
-                            `<button class="btn btn-danger" onclick="showArchiveModal('${patient._id}')">
+                    `<button class="btn btn-danger" onclick="showArchiveModal('${patient._id}')">
                                 <i class="fas fa-archive"></i>
                                 Archiver
                             </button>`
-                        }
+                }
                     </div>
                 </div>
             `).join('');
@@ -905,14 +1054,14 @@
                 // Recherche exacte du nom et prénom
                 const fullName = `${patient.nom} ${patient.prenom}`.toLowerCase();
                 const searchTerms = searchQuery.toLowerCase();
-                
+
                 // Vérifier si la recherche correspond au nom complet, au nom seul ou au prénom seul
-                const matchesSearch = searchQuery === '' || 
+                const matchesSearch = searchQuery === '' ||
                     fullName.includes(searchTerms) ||
                     patient.nom.toLowerCase().includes(searchTerms) ||
                     patient.prenom.toLowerCase().includes(searchTerms);
-                
-                const matchesStatus = statusFilter === 'all' || 
+
+                const matchesStatus = statusFilter === 'all' ||
                     (statusFilter === 'active' && !patient.archived) ||
                     (statusFilter === 'archived' && patient.archived);
 
@@ -924,7 +1073,7 @@
         function filterPatients() {
             const searchInput = document.getElementById('searchInput');
             const searchValue = searchInput.value.trim();
-            
+
             // Mettre à jour l'affichage
             renderPatients();
         }
@@ -961,17 +1110,17 @@
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                
+
                 const patient = patients.find(p => p._id === id);
                 const fileName = `patient_${patient.nom}_${patient.prenom}_${new Date().toISOString().split('T')[0]}.pdf`;
-                
+
                 link.setAttribute('download', fileName);
                 document.body.appendChild(link);
                 link.click();
-                
+
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(link);
-                
+
                 showSuccess('PDF généré avec succès');
             } catch (error) {
                 console.error('Erreur:', error);
@@ -979,62 +1128,142 @@
             }
         }
 
+        // Fonctions de notification améliorées
+        function showSuccess(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+
+            requestAnimationFrame(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            });
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        function showError(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification error';
+            notification.innerHTML = `
+                <i class="fas fa-exclamation-circle"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+
+            requestAnimationFrame(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            });
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
         // Archivage et restauration
-        async function showArchiveModal(id) {
-            if (confirm('Êtes-vous sûr de vouloir archiver ce patient ?')) {
+        function showArchiveModal(id) {
+            const patient = patients.find(p => p._id === id);
+            if (!patient) return;
+
+            const modal = document.getElementById('archiveModal');
+            const patientName = document.getElementById('patientName');
+            patientName.textContent = `${patient.nom} ${patient.prenom}`;
+
+            // Afficher le modal avec animation
+            modal.style.display = 'block';
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+            });
+
+            // Gestion des événements
+            const closeModal = () => {
+                modal.style.opacity = '0';
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            };
+
+            document.getElementById('cancelArchive').onclick = closeModal;
+            modal.querySelector('.close-btn').onclick = closeModal;
+
+            document.getElementById('confirmArchive').onclick = async () => {
                 try {
                     const response = await fetch(`/api/patients/${id}/archive`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
                     });
 
-                    if (response.ok) {
-                        const patient = patients.find(p => p._id === id);
-                        if (patient) {
-                            patient.archived = true;
-                            renderPatients();
-                        }
-                        showSuccess('Patient archivé avec succès');
-                    } else {
-                        throw new Error('Erreur lors de l\'archivage');
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Erreur lors de l\'archivage');
                     }
+
+                    const updatedPatient = await response.json();
+                    const patientIndex = patients.findIndex(p => p._id === id);
+
+                    if (patientIndex !== -1) {
+                        patients[patientIndex] = updatedPatient;
+                        renderPatients();
+                        showSuccess('Patient archivé avec succès');
+                    }
+
+                    closeModal();
                 } catch (error) {
-                    console.error('Erreur:', error);
-                    showError('Impossible d\'archiver le patient');
+                    console.error('Erreur détaillée:', error);
+                    showError(error.message || 'Impossible d\'archiver le patient');
                 }
-            }
+            };
         }
 
+        // Restauration d'un patient
         async function restorePatient(id) {
             try {
                 const response = await fetch(`/api/patients/${id}/restore`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        archived: false
+                    })
                 });
 
-                if (response.ok) {
-                    const patient = patients.find(p => p._id === id);
-                    if (patient) {
-                        patient.archived = false;
-                        renderPatients();
-                    }
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Erreur lors de la restauration');
+                }
+
+                const updatedPatient = await response.json();
+                const patientIndex = patients.findIndex(p => p._id === id);
+
+                if (patientIndex !== -1) {
+                    patients[patientIndex] = updatedPatient;
+                    renderPatients();
                     showSuccess('Patient restauré avec succès');
-                } else {
-                    throw new Error('Erreur lors de la restauration');
                 }
             } catch (error) {
-                console.error('Erreur:', error);
-                showError('Impossible de restaurer le patient');
+                console.error('Erreur détaillée:', error);
+                showError(error.message || 'Impossible de restaurer le patient');
             }
-        }
-
-        // Notifications
-        function showSuccess(message) {
-            alert(message);
-        }
-
-        function showError(message) {
-            alert(message);
         }
 
         // Upload de document
@@ -1042,7 +1271,7 @@
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*,.pdf';
-            
+
             input.onchange = async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1076,4 +1305,5 @@
         document.addEventListener('DOMContentLoaded', loadPatients);
     </script>
 </body>
-</html> 
+
+</html>

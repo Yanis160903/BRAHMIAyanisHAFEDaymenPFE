@@ -14,7 +14,7 @@ function toggleTextInput(selectId, inputGroupId) {
     const select = document.getElementById(selectId);
     const inputGroup = document.getElementById(inputGroupId + 'Group');
     if (!select || !inputGroup) return;
-    
+
     if (select.value === 'oui') {
         inputGroup.style.display = 'block';
     } else {
@@ -36,7 +36,7 @@ async function loadPatientData() {
             throw new Error('Erreur lors du chargement des données du patient');
         }
         const data = await response.json();
-        
+
         // Fonction utilitaire pour définir la valeur d'un élément de manière sécurisée
         const setElementValue = (elementId, value) => {
             const element = document.getElementById(elementId);
@@ -163,6 +163,9 @@ async function savePatientData() {
             throw new Error('ID du patient manquant');
         }
 
+        // Générer un sessionId unique pour cette session d'édition
+        const sessionId = new Date().getTime().toString();
+
         // Fonction utilitaire pour récupérer la valeur d'un élément de manière sécurisée
         const getElementValue = (elementId) => {
             const element = document.getElementById(elementId);
@@ -179,7 +182,8 @@ async function savePatientData() {
             profession: getElementValue('profession'),
             assurance: getElementValue('assurance'),
             medecinTraitant: getElementValue('medecinTraitant'),
-            adresse: getElementValue('adresse')
+            adresse: getElementValue('adresse'),
+            sessionId: sessionId
         };
 
         const antecedentsData = {
@@ -193,7 +197,8 @@ async function savePatientData() {
             antecedentsFamiliaux: getElementValue('antecedentsFamiliaux'),
             hygieneVie: getElementValue('hygieneVie'),
             alertes: getElementValue('alertes'),
-            habitudesToxiques: getElementValue('habitudesToxiques')
+            habitudesToxiques: getElementValue('habitudesToxiques'),
+            sessionId: sessionId
         };
 
         const medicamentsData = {
@@ -209,7 +214,8 @@ async function savePatientData() {
             vaccination: getElementValue('vaccination'),
             vaccinsEffectues: getElementValue('vaccinsEffectues'),
             atb: getElementValue('atb'),
-            antibiotiques: getElementValue('antibiotiques')
+            antibiotiques: getElementValue('antibiotiques'),
+            sessionId: sessionId
         };
 
         const prescriptionData = {
@@ -219,7 +225,8 @@ async function savePatientData() {
             posologie: getElementValue('posologie'),
             debut: getElementValue('debut'),
             fin: getElementValue('fin'),
-            commentaire: getElementValue('commentaire')
+            commentaire: getElementValue('commentaire'),
+            sessionId: sessionId
         };
 
         const suiviData = {
@@ -231,7 +238,8 @@ async function savePatientData() {
             effets_secondaires: getElementValue('effets_secondaires'),
             poids_surface: getElementValue('poids_surface'),
             pression_arterielle: getElementValue('pression_arterielle'),
-            resultat_imagerie: getElementValue('resultat_imagerie')
+            resultat_imagerie: getElementValue('resultat_imagerie'),
+            sessionId: sessionId
         };
 
         const evaluationData = {
@@ -242,7 +250,8 @@ async function savePatientData() {
             medicament: getElementValue('medicamentEval'),
             intervention: getElementValue('intervention'),
             objectifs: getElementValue('objectifs'),
-            suivi: getElementValue('suivi')
+            suivi: getElementValue('suivi'),
+            sessionId: sessionId
         };
 
         // Envoyer les données au serveur

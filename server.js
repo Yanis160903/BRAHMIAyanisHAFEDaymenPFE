@@ -19,8 +19,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/pharmacie
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('Connecté à MongoDB'))
-.catch(err => console.error('Erreur de connexion à MongoDB:', err));
+    .then(() => console.log('Connecté à MongoDB'))
+    .catch(err => console.error('Erreur de connexion à MongoDB:', err));
 
 // Configuration de multer pour l'upload de fichiers
 const storage = multer.diskStorage({
@@ -192,31 +192,16 @@ async function enregistrerModification(patientId, champ, ancienneValeur, nouvell
         return;
     }
 
-    // Vérifier s'il existe déjà une entrée d'historique pour cette session
-    const derniereModification = await Historique.findOne({
+    // Créer une nouvelle entrée pour chaque modification
+    const historique = new Historique({
         patientId,
+        champ,
+        ancienneValeur: cleanAncienneValeur,
+        nouvelleValeur: cleanNouvelleValeur,
         typeDonnee,
         sessionId
     });
-
-    if (derniereModification) {
-        // Mettre à jour l'entrée existante
-        derniereModification.champ = `${derniereModification.champ}, ${champ}`;
-        derniereModification.ancienneValeur = `${derniereModification.ancienneValeur}, ${cleanAncienneValeur}`;
-        derniereModification.nouvelleValeur = `${derniereModification.nouvelleValeur}, ${cleanNouvelleValeur}`;
-        await derniereModification.save();
-    } else {
-        // Créer une nouvelle entrée
-        const historique = new Historique({
-            patientId,
-            champ,
-            ancienneValeur: cleanAncienneValeur,
-            nouvelleValeur: cleanNouvelleValeur,
-            typeDonnee,
-            sessionId
-        });
-        await historique.save();
-    }
+    await historique.save();
 }
 
 // Routes API pour les patients
@@ -246,18 +231,20 @@ app.put('/api/patients/:id', async (req, res) => {
             return res.status(404).json({ message: 'Patient non trouvé' });
         }
 
-        const sessionId = new Date().getTime().toString(); // Générer un ID de session unique
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.id,
-                champ,
-                ancienPatient[champ],
-                nouvelleValeur,
-                'patient',
-                sessionId
-            );
+            if (champ !== 'sessionId') { // Ne pas enregistrer le sessionId comme une modification
+                await enregistrerModification(
+                    req.params.id,
+                    champ,
+                    ancienPatient[champ],
+                    nouvelleValeur,
+                    'patient',
+                    sessionId
+                );
+            }
         }
 
         const patient = await Patient.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -281,19 +268,20 @@ app.post('/api/antecedents', async (req, res) => {
 app.put('/api/antecedents/:patientId', async (req, res) => {
     try {
         const ancienAntecedents = await Antecedents.findOne({ patientId: req.params.patientId });
-        
-        const sessionId = new Date().getTime().toString(); // Générer un ID de session unique
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.patientId,
-                champ,
-                ancienAntecedents ? ancienAntecedents[champ] : null,
-                nouvelleValeur,
-                'antecedents',
-                sessionId
-            );
+            if (champ !== 'sessionId') {
+                await enregistrerModification(
+                    req.params.patientId,
+                    champ,
+                    ancienAntecedents ? ancienAntecedents[champ] : null,
+                    nouvelleValeur,
+                    'antecedents',
+                    sessionId
+                );
+            }
         }
 
         const antecedents = await Antecedents.findOneAndUpdate(
@@ -321,19 +309,20 @@ app.post('/api/medicaments', async (req, res) => {
 app.put('/api/medicaments/:patientId', async (req, res) => {
     try {
         const ancienMedicaments = await Medicaments.findOne({ patientId: req.params.patientId });
-        
-        const sessionId = new Date().getTime().toString(); // Générer un ID de session unique
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.patientId,
-                champ,
-                ancienMedicaments ? ancienMedicaments[champ] : null,
-                nouvelleValeur,
-                'medicaments',
-                sessionId
-            );
+            if (champ !== 'sessionId') {
+                await enregistrerModification(
+                    req.params.patientId,
+                    champ,
+                    ancienMedicaments ? ancienMedicaments[champ] : null,
+                    nouvelleValeur,
+                    'medicaments',
+                    sessionId
+                );
+            }
         }
 
         const medicaments = await Medicaments.findOneAndUpdate(
@@ -361,19 +350,20 @@ app.post('/api/prescriptions', async (req, res) => {
 app.put('/api/prescriptions/:patientId', async (req, res) => {
     try {
         const anciennePrescription = await Prescription.findOne({ patientId: req.params.patientId });
-        
-        const sessionId = new Date().getTime().toString(); // Générer un ID de session unique
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.patientId,
-                champ,
-                anciennePrescription ? anciennePrescription[champ] : null,
-                nouvelleValeur,
-                'prescription',
-                sessionId
-            );
+            if (champ !== 'sessionId') {
+                await enregistrerModification(
+                    req.params.patientId,
+                    champ,
+                    anciennePrescription ? anciennePrescription[champ] : null,
+                    nouvelleValeur,
+                    'prescription',
+                    sessionId
+                );
+            }
         }
 
         const prescription = await Prescription.findOneAndUpdate(
@@ -401,19 +391,20 @@ app.post('/api/suivi', async (req, res) => {
 app.put('/api/suivi/:patientId', async (req, res) => {
     try {
         const ancienSuivi = await Suivi.findOne({ patientId: req.params.patientId });
-        
-        const sessionId = new Date().getTime().toString(); // Générer un ID de session unique
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.patientId,
-                champ,
-                ancienSuivi ? ancienSuivi[champ] : null,
-                nouvelleValeur,
-                'suivi',
-                sessionId
-            );
+            if (champ !== 'sessionId') {
+                await enregistrerModification(
+                    req.params.patientId,
+                    champ,
+                    ancienSuivi ? ancienSuivi[champ] : null,
+                    nouvelleValeur,
+                    'suivi',
+                    sessionId
+                );
+            }
         }
 
         const suivi = await Suivi.findOneAndUpdate(
@@ -445,22 +436,24 @@ app.put('/api/evaluation/:patientId', async (req, res) => {
     try {
         console.log('Mise à jour évaluation pour patient:', req.params.patientId);
         console.log('Données reçues:', req.body);
-        
+
         const ancienneEvaluation = await Evaluation.findOne({ patientId: req.params.patientId });
         console.log('Ancienne évaluation:', ancienneEvaluation);
-        
-        const sessionId = new Date().getTime().toString();
+
+        const sessionId = req.body.sessionId || new Date().getTime().toString();
 
         // Enregistrer les modifications pour chaque champ
         for (const [champ, nouvelleValeur] of Object.entries(req.body)) {
-            await enregistrerModification(
-                req.params.patientId,
-                champ,
-                ancienneEvaluation ? ancienneEvaluation[champ] : null,
-                nouvelleValeur,
-                'evaluation',
-                sessionId
-            );
+            if (champ !== 'sessionId') {
+                await enregistrerModification(
+                    req.params.patientId,
+                    champ,
+                    ancienneEvaluation ? ancienneEvaluation[champ] : null,
+                    nouvelleValeur,
+                    'evaluation',
+                    sessionId
+                );
+            }
         }
 
         const evaluation = await Evaluation.findOneAndUpdate(
@@ -496,30 +489,11 @@ app.get('/api/historique/:patientId', async (req, res) => {
             'numeroDossier'
         ];
 
-        // Transformer l'historique pour séparer les modifications groupées
-        const historiqueDetaille = historique.flatMap(entry => {
-            const champs = entry.champ.split(', ');
-            const anciennesValeurs = entry.ancienneValeur.split(', ');
-            const nouvellesValeurs = entry.nouvelleValeur.split(', ');
+        // Filtrer les champs exclus
+        const historiqueFiltre = historique.filter(entry => !excludedFields.includes(entry.champ));
 
-            return champs.map((champ, index) => {
-                // Ne pas inclure les champs exclus
-                if (excludedFields.includes(champ)) {
-                    return null;
-                }
-
-                return {
-                    dateModification: entry.dateModification,
-                    champ: champ,
-                    ancienneValeur: anciennesValeurs[index],
-                    nouvelleValeur: nouvellesValeurs[index],
-                    typeDonnee: entry.typeDonnee
-                };
-            }).filter(Boolean); // Filtrer les entrées null
-        });
-
-        console.log('Historique détaillé:', historiqueDetaille);
-        res.json(historiqueDetaille);
+        console.log('Historique détaillé:', historiqueFiltre);
+        res.json(historiqueFiltre);
     } catch (error) {
         console.error('Erreur lors de la récupération de l\'historique:', error);
         res.status(500).json({ message: error.message });
@@ -596,12 +570,13 @@ app.get('/api/patients/:id/pdf', async (req, res) => {
         }
 
         // Récupérer toutes les données associées au patient
-        const [antecedents, medicaments, prescription, suivi, evaluation] = await Promise.all([
+        const [antecedents, medicaments, prescription, suivi, evaluation, historique] = await Promise.all([
             Antecedents.findOne({ patientId: patient._id }),
             Medicaments.findOne({ patientId: patient._id }),
             Prescription.findOne({ patientId: patient._id }),
             Suivi.findOne({ patientId: patient._id }),
-            Evaluation.findOne({ patientId: patient._id })
+            Evaluation.findOne({ patientId: patient._id }),
+            Historique.find({ patientId: patient._id }).sort({ dateModification: -1 })
         ]);
 
         // Convertir l'image en base64 si elle existe
@@ -628,6 +603,12 @@ app.get('/api/patients/:id/pdf', async (req, res) => {
                     .document-section { margin-top: 30px; }
                     .document-image { max-width: 100%; height: auto; margin-top: 10px; }
                     .page-break { page-break-after: always; }
+                    .historique-section { margin-top: 30px; }
+                    .historique-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+                    .historique-table th, .historique-table td { padding: 8px; border: 1px solid #ddd; }
+                    .historique-table th { background-color: #f5f5f5; }
+                    .valeur-avant { color: #F56565; }
+                    .valeur-apres { color: #48BB78; }
                 </style>
             </head>
             <body>
@@ -726,11 +707,11 @@ app.get('/api/patients/:id/pdf', async (req, res) => {
                     <h2 class="section-title">Médicaments</h2>
                     <table>
                         <tr>
-                            <th>Allergie Médicamenteuse</th>
+                            <th>Allergies Médicamenteuses</th>
                             <td>${medicaments.allergieMedi || '-'}</td>
                         </tr>
                         <tr>
-                            <th>Médicament</th>
+                            <th>Médicaments</th>
                             <td>${medicaments.medicament || '-'}</td>
                         </tr>
                         <tr>
@@ -888,10 +869,36 @@ app.get('/api/patients/:id/pdf', async (req, res) => {
                 ${patient.documentPath ? `
                 <div class="document-section">
                     <h2 class="section-title">Document Joint</h2>
-                    ${patient.documentType.startsWith('image/') ? 
-                        `<img src="${imageBase64}" class="document-image" />` :
-                        `<p>Document PDF: ${patient.documentName}</p>`
-                    }
+                    ${patient.documentType.startsWith('image/') ?
+                    `<img src="${imageBase64}" class="document-image" />` :
+                    `<p>Document PDF: ${patient.documentName}</p>`
+                }
+                </div>
+                ` : ''}
+
+                ${historique && historique.length > 0 ? `
+                <div class="historique-section">
+                    <h2 class="section-title">Historique des Modifications</h2>
+                    <table class="historique-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Champ</th>
+                                <th>Ancienne Valeur</th>
+                                <th>Nouvelle Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${historique.map(modif => `
+                                <tr>
+                                    <td>${new Date(modif.dateModification).toLocaleString('fr-FR')}</td>
+                                    <td>${modif.champ}</td>
+                                    <td class="valeur-avant">${modif.ancienneValeur || '-'}</td>
+                                    <td class="valeur-apres">${modif.nouvelleValeur || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
                 ` : ''}
 
@@ -914,7 +921,7 @@ app.get('/api/patients/:id/pdf', async (req, res) => {
         // Générer le PDF
         const file = { content: html };
         const pdfBuffer = await htmlPdf.generatePdf(file, options);
-        
+
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=patient_${patient._id}.pdf`);
         res.send(pdfBuffer);
@@ -937,15 +944,18 @@ app.put('/api/patients/:id/archive', async (req, res) => {
             req.params.id,
             'archived',
             patient.archived,
-            true,
+            'true',
             'patient',
             new Date().getTime().toString()
         );
 
+        // Mettre à jour le statut d'archivage
         patient.archived = true;
         await patient.save();
+
         res.json(patient);
     } catch (error) {
+        console.error('Erreur lors de l\'archivage:', error);
         res.status(400).json({ message: error.message });
     }
 });
@@ -963,15 +973,18 @@ app.put('/api/patients/:id/restore', async (req, res) => {
             req.params.id,
             'archived',
             patient.archived,
-            false,
+            'false',
             'patient',
             new Date().getTime().toString()
         );
 
+        // Mettre à jour le statut d'archivage
         patient.archived = false;
         await patient.save();
+
         res.json(patient);
     } catch (error) {
+        console.error('Erreur lors de la restauration:', error);
         res.status(400).json({ message: error.message });
     }
 });
@@ -1080,6 +1093,6 @@ app.get('/liste-patients', (req, res) => {
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
 }); 

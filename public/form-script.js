@@ -1,6 +1,6 @@
 // Gestion du formulaire multi-étapes
 let currentStep = 1;
-const totalSteps = 5;
+const totalSteps = 6;
 let patientId = null; // Pour stocker l'ID du patient en cours de création
 
 // Éléments du DOM
@@ -11,21 +11,47 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const submitBtn = document.getElementById('submitBtn');
 
-// Fonction pour afficher/masquer les champs de texte en fonction des sélections
-function toggleTextInput(selectId, inputGroupId) {
-    const select = document.getElementById(selectId);
-    const inputGroup = document.getElementById(inputGroupId + 'Group');
-    
-    if (select.value === 'oui') {
-        inputGroup.style.display = 'block';
-    } else {
-        inputGroup.style.display = 'none';
-    }
+// Fonction pour gérer les champs conditionnels
+function handleConditionalFields() {
+    const conditionalFields = {
+        'allergieMedi': 'medicament',
+        'automedication': 'medicamentAutomed',
+        'complements': 'complement',
+        'phytotherapie': 'phytotherapieDetails',
+        'vaccination': 'vaccinsEffectues',
+        'atb': 'antibiotiques'
+    };
+
+    Object.entries(conditionalFields).forEach(([selectId, inputGroupId]) => {
+        const select = document.getElementById(selectId);
+        const inputGroup = document.getElementById(inputGroupId + 'Group');
+
+        if (select && inputGroup) {
+            select.addEventListener('change', function () {
+                inputGroup.style.display = this.value === 'oui' ? 'flex' : 'none';
+            });
+            // Initialisation au chargement
+            inputGroup.style.display = select.value === 'oui' ? 'flex' : 'none';
+        }
+    });
 }
 
 // Fonction pour valider les champs de l'étape actuelle
 function validateCurrentStep() {
-    return true; // Toujours retourner true car les champs ne sont plus obligatoires
+    const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
+    const requiredFields = currentStepElement.querySelectorAll('[required]');
+    let isValid = true;
+
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            isValid = false;
+            field.style.borderColor = 'var(--danger-color)';
+        } else {
+            field.style.borderColor = '';
+        }
+    });
+
+    return isValid;
 }
 
 // Fonction pour mettre à jour l'affichage des étapes
@@ -39,11 +65,6 @@ function updateStepDisplay() {
     });
 
     // Mettre à jour la barre de progression
-    const progressFill = document.querySelector('.progress-line-fill');
-    const progressPercentage = ((currentStep - 1) / (totalSteps - 1)) * 100;
-    progressFill.style.width = `${progressPercentage}%`;
-
-    // Mettre à jour les étapes
     progressSteps.forEach((step, index) => {
         if (index + 1 < currentStep) {
             step.classList.add('completed');
@@ -60,13 +81,19 @@ function updateStepDisplay() {
     prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
     nextBtn.style.display = currentStep === totalSteps ? 'none' : 'block';
     submitBtn.style.display = currentStep === totalSteps ? 'block' : 'none';
+
+    // Défilement vers le haut de la page
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
 }
 
 // Fonction pour récupérer les données de l'étape actuelle
 function getCurrentStepData() {
     const currentStepElement = document.querySelector(`.form-step[data-step="${currentStep}"]`);
     const formData = {};
-    
+
     // Récupérer tous les champs du formulaire de l'étape courante
     const inputs = currentStepElement.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
@@ -81,13 +108,13 @@ function getCurrentStepData() {
 // Fonction pour sauvegarder les données de l'étape
 async function saveStepData() {
     const stepData = getCurrentStepData();
-    
+
     try {
         let response;
         let endpoint;
-        
+
         // Déterminer l'endpoint en fonction de l'étape
-        switch(currentStep) {
+        switch (currentStep) {
             case 1: // Informations Générales
                 endpoint = '/api/patients';
                 break;
@@ -107,43 +134,75 @@ async function saveStepData() {
                 endpoint = '/api/suivi';
                 stepData.patientId = patientId;
                 break;
+            case 6: // Évaluation
+                endpoint = '/api/evaluation';
+                stepData.patientId = patientId;
+                break;
+            default:
+                throw new Error('Étape non reconnue');
         }
 
         // Envoyer les données à l'API
         response = await fetch(endpoint, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(stepData)
         });
 
-        const data = await response.json();
-        
-        if (response.ok) {
-            // Si c'est la première étape, sauvegarder l'ID du patient
-            if (currentStep === 1) {
-                patientId = data._id;
-            }
-            return true;
-        } else {
-            throw new Error(data.message || 'Erreur lors de la sauvegarde des données');
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.message || `Erreur HTTP: ${response.status}`);
         }
+
+        const data = await response.json();
+
+        // Si c'est la première étape, sauvegarder l'ID du patient
+        if (currentStep === 1) {
+            patientId = data._id || data.id;
+        }
+
+        return true;
     } catch (error) {
         console.error('Erreur lors de la sauvegarde:', error);
-        alert(`Erreur lors de la sauvegarde des données : ${error.message}`);
-        return false;
+        throw new Error(`Erreur lors de la sauvegarde des données : ${error.message}`);
     }
 }
+
+// Soumission finale du formulaire
+form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    try {
+        // Sauvegarder les données de la dernière étape
+        const saved = await saveStepData();
+        if (saved) {
+            // Afficher un message de succès
+            alert('Patient enregistré avec succès !');
+            // Redirection vers la liste des patients
+            window.location.href = 'liste-patients.html';
+        }
+    } catch (error) {
+        console.error('Erreur détaillée:', error);
+        alert(`Une erreur est survenue lors de l'enregistrement du patient :\n\n${error.message}`);
+    }
+});
 
 // Gestionnaire d'événements pour le bouton "Suivant"
 nextBtn.addEventListener('click', async () => {
     if (currentStep < totalSteps) {
-        // Sauvegarder les données de l'étape actuelle
-        const saved = await saveStepData();
-        if (saved) {
-            currentStep++;
-            updateStepDisplay();
+        // Valider les champs de l'étape actuelle
+        if (validateCurrentStep()) {
+            // Sauvegarder les données de l'étape actuelle
+            const saved = await saveStepData();
+            if (saved) {
+                currentStep++;
+                updateStepDisplay();
+            }
+        } else {
+            alert('Veuillez remplir tous les champs obligatoires');
         }
     }
 });
@@ -156,22 +215,6 @@ prevBtn.addEventListener('click', () => {
     }
 });
 
-// Soumission finale du formulaire
-form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    try {
-        // Sauvegarder les données de la dernière étape
-        const saved = await saveStepData();
-        if (saved) {
-            // Redirection vers la liste des patients en cas de succès
-            window.location.href = 'liste-patients.html';
-        }
-    } catch (error) {
-        console.error('Erreur détaillée:', error);
-        alert(`Une erreur est survenue lors de l'enregistrement du patient :\n\n${error.message}`);
-    }
-});
-
 // Initialisation
-updateStepDisplay(); 
+updateStepDisplay();
+handleConditionalFields(); 

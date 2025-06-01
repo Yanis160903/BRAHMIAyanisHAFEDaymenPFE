@@ -1,14 +1,382 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modifier Patient - Pharmacie Clinique</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="edit-styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6C63FF;
+            --primary-light: #8B85FF;
+            --primary-dark: #5A52D5;
+            --secondary-color: #8B85FF;
+            --bg-gradient: linear-gradient(135deg, #F8F9FF 0%, #E8EFFF 100%);
+            --text-color: #2D3748;
+            --text-light: #718096;
+            --shadow: 0 4px 20px rgba(108, 99, 255, 0.15);
+            --shadow-hover: 0 8px 30px rgba(108, 99, 255, 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --success-color: #48BB78;
+            --warning-color: #ED8936;
+            --danger-color: #F56565;
+            --border-radius: 16px;
+            --spacing: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--glass-bg);
+            padding: 1.2rem 2.5rem;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .navbar:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+            transform: translateX(-100%);
+            transition: var(--transition);
+        }
+
+        .logo:hover::after {
+            transform: translateX(0);
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+
+        .logo:hover i {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            font-size: 1.1rem;
+            overflow: hidden;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 0.1;
+        }
+
+        .nav-links a.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-links a.active:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 90px auto 0;
+            padding: 2rem;
+        }
+
+        .edit-container {
+            background: var(--glass-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .edit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(108, 99, 255, 0.1);
+        }
+
+        .edit-header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .btn:hover i {
+            transform: scale(1.1);
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #718096, #A0AEC0);
+            color: white;
+        }
+
+        /* Form Sections */
+        .edit-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(108, 99, 255, 0.1);
+            transition: var(--transition);
+        }
+
+        .edit-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .edit-section h2 {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .edit-section h2 i {
+            color: var(--primary-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.8rem 1rem;
+            border: 2px solid rgba(108, 99, 255, 0.2);
+            border-radius: 12px;
+            background: var(--glass-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            .logo i {
+                font-size: 1.6rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0.8rem;
+                font-size: 1rem;
+            }
+
+            .container {
+                padding: 1rem;
+                margin-top: 80px;
+            }
+
+            .edit-header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .edit-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="logo">
@@ -18,8 +386,6 @@
         <ul class="nav-links">
             <li><a href="index.html"><i class="fas fa-home"></i> Accueil</a></li>
             <li><a href="liste-patients.html" class="active"><i class="fas fa-users"></i> Patients</a></li>
-            <li><a href="#"><i class="fas fa-pills"></i> Médicaments</a></li>
-            <li><a href="#"><i class="fas fa-chart-line"></i> Statistiques</a></li>
         </ul>
     </nav>
 
@@ -138,7 +504,8 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="allergieMedi">Allergies Médicamenteuses</label>
-                            <select id="allergieMedi" name="allergieMedi" onchange="toggleTextInput('allergieMedi', 'medicament')">
+                            <select id="allergieMedi" name="allergieMedi"
+                                onchange="toggleTextInput('allergieMedi', 'medicament')">
                                 <option value="non">Non</option>
                                 <option value="oui">Oui</option>
                             </select>
@@ -149,7 +516,8 @@
                         </div>
                         <div class="form-group">
                             <label for="automedication">Automédication</label>
-                            <select id="automedication" name="automedication" onchange="toggleTextInput('automedication', 'medicamentAutomed')">
+                            <select id="automedication" name="automedication"
+                                onchange="toggleTextInput('automedication', 'medicamentAutomed')">
                                 <option value="non">Non</option>
                                 <option value="oui">Oui</option>
                             </select>
@@ -160,7 +528,8 @@
                         </div>
                         <div class="form-group">
                             <label for="complements">Compléments</label>
-                            <select id="complements" name="complements" onchange="toggleTextInput('complements', 'complement')">
+                            <select id="complements" name="complements"
+                                onchange="toggleTextInput('complements', 'complement')">
                                 <option value="non">Non</option>
                                 <option value="oui">Oui</option>
                             </select>
@@ -171,7 +540,8 @@
                         </div>
                         <div class="form-group">
                             <label for="phytotherapie">Phytothérapie</label>
-                            <select id="phytotherapie" name="phytotherapie" onchange="toggleTextInput('phytotherapie', 'phytotherapieDetails')">
+                            <select id="phytotherapie" name="phytotherapie"
+                                onchange="toggleTextInput('phytotherapie', 'phytotherapieDetails')">
                                 <option value="non">Non</option>
                                 <option value="oui">Oui</option>
                             </select>
@@ -182,7 +552,8 @@
                         </div>
                         <div class="form-group">
                             <label for="vaccination">Vaccination</label>
-                            <select id="vaccination" name="vaccination" onchange="toggleTextInput('vaccination', 'vaccinsEffectues')">
+                            <select id="vaccination" name="vaccination"
+                                onchange="toggleTextInput('vaccination', 'vaccinsEffectues')">
                                 <option value="non">Non</option>
                                 <option value="oui">Oui</option>
                             </select>
@@ -324,4 +695,5 @@
 
     <script src="edit-script.js"></script>
 </body>
-</html> 
+
+</html>

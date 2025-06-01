@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Détails de la Version - Pharmacie Clinique</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -39,21 +41,6 @@
             color: var(--text-color);
             min-height: 100vh;
             line-height: 1.6;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 133, 255, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
         }
 
         .navbar {
@@ -69,7 +56,6 @@
             justify-content: space-between;
             align-items: center;
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
         }
 
         .navbar-brand {
@@ -80,13 +66,6 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
-        }
-
-        .navbar-brand i {
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .main-content {
@@ -109,15 +88,11 @@
             background: var(--glass-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
-            border: 1px solid rgba(108, 99, 255, 0.1);
-            backdrop-filter: blur(10px);
         }
 
         .header h1 {
             font-size: 2.6rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary-color);
             font-weight: 700;
         }
 
@@ -133,11 +108,7 @@
             gap: 0.5rem;
             color: white;
             text-decoration: none;
-            box-shadow: var(--shadow);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            background: var(--primary-color);
         }
 
         .btn:hover {
@@ -145,26 +116,12 @@
             box-shadow: var(--shadow-hover);
         }
 
-        .version-details {
+        .section {
             background: var(--glass-bg);
             border-radius: var(--border-radius);
             padding: 2rem;
             margin-bottom: 2rem;
             box-shadow: var(--shadow);
-            border: 1px solid rgba(108, 99, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .section {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(108, 99, 255, 0.1);
-        }
-
-        .section:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
         }
 
         .section-title {
@@ -174,10 +131,6 @@
             display: flex;
             align-items: center;
             gap: 0.8rem;
-        }
-
-        .section-title i {
-            font-size: 1.8rem;
         }
 
         .data-grid {
@@ -191,27 +144,26 @@
             padding: 1.2rem;
             border-radius: 12px;
             transition: var(--transition);
-            position: relative;
+            border: 1px solid rgba(108, 99, 255, 0.1);
         }
 
         .data-item.modified {
             background: #fff5f5;
-            border-left: 4px solid #dc3545;
-            padding: 1.5rem;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .data-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .data-item.modified .data-label {
-            color: #dc3545;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        .data-item.modified .data-label::before {
-            content: '\f303';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            margin-right: 8px;
-            color: #dc3545;
+            color: var(--danger-color);
+            font-weight: 600;
         }
 
         .value-comparison {
@@ -231,56 +183,27 @@
             font-size: 0.9rem;
             font-weight: 600;
             color: var(--text-light);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .value-label i {
-            font-size: 1rem;
-        }
-
-        .old-value, .new-value {
+        .old-value,
+        .new-value {
             padding: 1rem;
             border-radius: 8px;
             font-size: 1rem;
             line-height: 1.5;
+            position: relative;
         }
 
         .old-value {
             background-color: #fff5f5;
-            color: #dc3545;
-            border: 1px solid #dc3545;
-            position: relative;
-        }
-
-        .old-value::before {
-            content: 'Ancienne valeur';
-            position: absolute;
-            top: -0.5rem;
-            left: 1rem;
-            background: #fff5f5;
-            padding: 0 0.5rem;
-            font-size: 0.8rem;
-            color: #dc3545;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
         }
 
         .new-value {
             background-color: #f0fff4;
-            color: #38a169;
-            border: 1px solid #38a169;
-            position: relative;
-        }
-
-        .new-value::before {
-            content: 'Nouvelle valeur';
-            position: absolute;
-            top: -0.5rem;
-            left: 1rem;
-            background: #f0fff4;
-            padding: 0 0.5rem;
-            font-size: 0.8rem;
-            color: #38a169;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
         }
 
         .unchanged-value {
@@ -290,23 +213,6 @@
             border: 1px solid rgba(108, 99, 255, 0.1);
             font-size: 1rem;
             line-height: 1.5;
-        }
-
-        .data-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .data-label {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .data-value {
-            font-size: 1.1rem;
-            color: var(--text-color);
-            font-weight: 500;
         }
 
         .no-data {
@@ -323,10 +229,6 @@
 
             .navbar-brand {
                 font-size: 1.3rem;
-            }
-
-            .navbar-brand i {
-                font-size: 1.6rem;
             }
 
             .main-content {
@@ -351,8 +253,8 @@
         }
     </style>
 </head>
+
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <a href="/" class="navbar-brand">
             <i class="fas fa-clinic-medical"></i>
@@ -360,18 +262,17 @@
         </a>
     </nav>
 
-    <!-- Main Content -->
     <div class="main-content">
         <div class="container">
             <div class="header">
                 <h1>Détails de la Version</h1>
-                <a href="javascript:history.back()" class="btn btn-primary">
+                <a href="javascript:history.back()" class="btn">
                     <i class="fas fa-arrow-left"></i>
                     Retour
                 </a>
             </div>
 
-            <div class="version-details" id="versionDetails">
+            <div id="versionDetails">
                 <!-- Les détails seront ajoutés dynamiquement ici -->
             </div>
         </div>
@@ -386,30 +287,76 @@
         // Charger les détails de la version
         async function loadVersionDetails() {
             try {
+                // Récupérer les données de modification
                 const response = await fetch(`/api/historique/${patientId}`);
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
                 const versions = await response.json();
-                const version = versions.find(v => v.dateModification === versionDate);
-                
-                if (version) {
-                    renderVersionDetails(version);
+
+                // Trouver toutes les modifications pour cette date
+                const modifications = versions.filter(v => v.dateModification === versionDate);
+
+                if (modifications.length > 0) {
+                    // Récupérer toutes les données du patient
+                    const patientResponse = await fetch(`/api/patients/${patientId}/complete`);
+                    if (!patientResponse.ok) {
+                        throw new Error(`Erreur HTTP: ${patientResponse.status}`);
+                    }
+                    const patientData = await patientResponse.json();
+
+                    // Créer un objet pour stocker toutes les modifications
+                    const modifiedFields = [];
+                    const oldValues = {};
+                    const newValues = {};
+
+                    // Collecter toutes les modifications
+                    modifications.forEach(mod => {
+                        if (!modifiedFields.includes(mod.champ)) {
+                            modifiedFields.push(mod.champ);
+                        }
+                        oldValues[mod.champ] = mod.ancienneValeur;
+                        newValues[mod.champ] = mod.nouvelleValeur;
+                    });
+
+                    console.log('Champs modifiés:', modifiedFields);
+                    console.log('Anciennes valeurs:', oldValues);
+                    console.log('Nouvelles valeurs:', newValues);
+
+                    // Fusionner les données
+                    const completeData = {
+                        ...patientData.patient,
+                        ...patientData.antecedents,
+                        ...patientData.medicaments,
+                        ...patientData.prescription,
+                        ...patientData.suivi,
+                        ...patientData.evaluation,
+                        dateModification: versionDate,
+                        modifiedFields,
+                        oldValues,
+                        newValues
+                    };
+
+                    renderVersionDetails(completeData);
                 } else {
                     showError('Version non trouvée');
                 }
             } catch (error) {
-                console.error('Erreur lors du chargement des détails:', error);
-                showError('Impossible de charger les détails de la version');
+                console.error('Erreur:', error);
+                showError(`Impossible de charger les détails: ${error.message}`);
             }
         }
 
         // Afficher les détails de la version
-        function renderVersionDetails(version) {
+        function renderVersionDetails(data) {
             const details = document.getElementById('versionDetails');
-            
-            // Créer les sections pour chaque catégorie de données
+            console.log('Données complètes:', data);
+
+            // Définir les sections et leurs champs
             const sections = {
                 'Informations Générales': [
-                    'nom', 'prenom', 'dateNaissance', 'sexe', 'adresse', 'telephone', 
-                    'email', 'medecinTraitant', 'numeroDossier', 'profession', 
+                    'nom', 'prenom', 'dateNaissance', 'sexe', 'adresse', 'telephone',
+                    'email', 'medecinTraitant', 'numeroDossier', 'profession',
                     'assurance', 'dateEntretien'
                 ],
                 'Antécédents': [
@@ -428,37 +375,15 @@
                 'Suivi': [
                     'date_suivi', 'type_examen', 'resultat_analyse', 'unite_mesure',
                     'effets_secondaires', 'poids_surface', 'pression_arterielle',
-                    'resultat_imagerie'
+                    'resultat_imagerie', 'suivi'
                 ],
                 'Évaluation': [
-                    'dateEval', 'typePLM', 'sousType', 'medicament', 'intervention',
-                    'objectifs', 'suivi'
+                    'dateEval', 'typePLM', 'sousType', 'medicamentEval', 'intervention',
+                    'objectifs'
                 ]
             };
 
-            let html = `
-                <div class="section">
-                    <h2 class="section-title">
-                        <i class="fas fa-history"></i>
-                        Informations de la Version
-                    </h2>
-                    <div class="data-grid">
-                        <div class="data-item">
-                            <div class="data-label">Date de modification</div>
-                            <div class="data-value">${new Date(version.dateModification).toLocaleString('fr-FR')}</div>
-                        </div>
-                        <div class="data-item">
-                            <div class="data-label">Type de modification</div>
-                            <div class="data-value">${version.typeDonnee}</div>
-                        </div>
-                        <div class="data-item">
-                            <div class="data-label">Champs modifiés</div>
-                            <div class="data-value">${version.modifications ? 
-                                version.modifications.map(field => formatFieldName(field)).join(', ') : 
-                                formatFieldName(version.champ)}</div>
-                        </div>
-                    </div>
-                </div>`;
+            let html = '';
 
             // Générer les sections pour chaque catégorie
             for (const [category, fields] of Object.entries(sections)) {
@@ -471,32 +396,35 @@
                         <div class="data-grid">`;
 
                 fields.forEach(field => {
-                    const value = version[field];
-                    if (value !== undefined) {
-                        const isModified = version.modifications ? 
-                            version.modifications.includes(field) : 
-                            version.champ === field;
-                        
-                        html += `
-                            <div class="data-item ${isModified ? 'modified' : ''}">
-                                <div class="data-label">${formatFieldName(field)}</div>
-                                <div class="data-value">
-                                    ${isModified ? 
-                                        `<div class="value-comparison">
-                                            <div class="value-column">
-                                                <div class="old-value">${version.anciennesValeurs ? 
-                                                    version.anciennesValeurs[field] || 'Non spécifié' : 
-                                                    version.ancienneValeur || 'Non spécifié'}</div>
-                                            </div>
-                                            <div class="value-column">
-                                                <div class="new-value">${value || 'Non spécifié'}</div>
-                                            </div>
-                                        </div>` :
-                                        `<div class="unchanged-value">${value || 'Non spécifié'}</div>`
-                                    }
-                                </div>
-                            </div>`;
-                    }
+                    const isModified = data.modifiedFields.includes(field);
+                    console.log(`Champ ${field}:`, { isModified, oldValue: data.oldValues[field], newValue: data.newValues[field] });
+
+                    const currentValue = data[field] || '';
+                    const oldValue = data.oldValues[field] || '';
+                    const newValue = data.newValues[field] || '';
+
+                    html += `
+                        <div class="data-item ${isModified ? 'modified' : ''}">
+                            <div class="data-label">
+                                <i class="fas ${isModified ? 'fa-edit' : 'fa-info-circle'}"></i>
+                                ${formatFieldName(field)}
+                            </div>
+                            <div class="data-value">
+                                ${isModified ?
+                            `<div class="value-comparison">
+                                        <div class="value-column">
+                                            <div class="value-label">Ancienne valeur:</div>
+                                            <div class="old-value">${oldValue || 'Non spécifié'}</div>
+                                        </div>
+                                        <div class="value-column">
+                                            <div class="value-label">Nouvelle valeur:</div>
+                                            <div class="new-value">${newValue || 'Non spécifié'}</div>
+                                        </div>
+                                    </div>` :
+                            `<div class="unchanged-value">${currentValue || 'Non spécifié'}</div>`
+                        }
+                            </div>
+                        </div>`;
                 });
 
                 html += `
@@ -567,26 +495,36 @@
                 poids_surface: 'Poids/Surface',
                 pression_arterielle: 'Pression artérielle',
                 resultat_imagerie: 'Résultat d\'imagerie',
+                suivi: 'Suivi',
 
                 // Évaluation
                 dateEval: 'Date d\'évaluation',
                 typePLM: 'Type PLM',
                 sousType: 'Sous-type',
-                medicament: 'Médicament',
+                medicamentEval: 'Médicament',
                 intervention: 'Intervention',
-                objectifs: 'Objectifs',
-                suivi: 'Suivi'
+                objectifs: 'Objectifs'
             };
             return fieldNames[field] || field;
         }
 
         // Notifications
         function showError(message) {
-            alert(message);
+            const details = document.getElementById('versionDetails');
+            details.innerHTML = `
+                <div class="section">
+                    <div class="data-item modified" style="text-align: center; padding: 2rem;">
+                        <i class="fas fa-exclamation-circle" style="font-size: 2rem; color: var(--danger-color); margin-bottom: 1rem;"></i>
+                        <div class="data-value" style="color: var(--danger-color);">
+                            ${message}
+                        </div>
+                    </div>
+                </div>`;
         }
 
         // Chargement initial
         document.addEventListener('DOMContentLoaded', loadVersionDetails);
     </script>
 </body>
-</html> 
+
+</html>

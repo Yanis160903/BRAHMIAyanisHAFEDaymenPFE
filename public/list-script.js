@@ -131,14 +131,14 @@ function renderTable() {
                     <button class="action-btn edit-btn" onclick="editPatient('${patient._id}')" title="Modifier">
                         <i class="fas fa-edit"></i> Modifier
                     </button>
-                    ${patient.archived ? 
-                        `<button class="action-btn restore-btn" onclick="restorePatient('${patient._id}')" title="Restaurer">
+                    ${patient.archived ?
+                `<button class="action-btn restore-btn" onclick="restorePatient('${patient._id}')" title="Restaurer">
                             <i class="fas fa-undo"></i> Restaurer
                         </button>` :
-                        `<button class="action-btn archive-btn" onclick="showArchiveModal('${patient._id}')" title="Archiver">
+                `<button class="action-btn archive-btn" onclick="showArchiveModal('${patient._id}')" title="Archiver">
                             <i class="fas fa-archive"></i> Archiver
                         </button>`
-                    }
+            }
                 </div>
             </td>
         `;
@@ -151,11 +151,11 @@ function renderTable() {
 // Filtrage des patients
 function getFilteredPatients() {
     let filtered = patients;
-    
+
     // Filtre de recherche
     const searchTerm = searchInput.value.toLowerCase();
     if (searchTerm) {
-        filtered = filtered.filter(patient => 
+        filtered = filtered.filter(patient =>
             patient.nom.toLowerCase().includes(searchTerm) ||
             patient.prenom.toLowerCase().includes(searchTerm) ||
             patient.numeroDossier.toString().includes(searchTerm)
@@ -164,7 +164,7 @@ function getFilteredPatients() {
 
     // Filtre de statut
     if (currentFilter !== 'all') {
-        filtered = filtered.filter(patient => 
+        filtered = filtered.filter(patient =>
             currentFilter === 'archived' ? patient.archived : !patient.archived
         );
     }
@@ -199,10 +199,10 @@ function paginatePatients(patients) {
 function updatePagination() {
     const filteredPatients = getFilteredPatients();
     const maxPage = Math.ceil(filteredPatients.length / itemsPerPage);
-    
+
     prevPageBtn.disabled = currentPage === 1;
     nextPageBtn.disabled = currentPage === maxPage;
-    
+
     pageInfo.textContent = `Page ${currentPage} sur ${maxPage}`;
 }
 
@@ -214,25 +214,33 @@ async function handleArchive() {
         const response = await fetch(`/api/patients/${patientToArchive}/archive`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                champ: 'archived',
+                nouvelleValeur: 'true'
+            })
         });
 
-        if (response.ok) {
-            const patient = patients.find(p => p._id === patientToArchive);
-            if (patient) {
-                patient.archived = true;
-                renderTable();
-            }
-            archiveModal.style.display = 'none';
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de l\'archivage');
+        }
+
+        const updatedPatient = await response.json();
+        const patientIndex = patients.findIndex(p => p._id === patientToArchive);
+
+        if (patientIndex !== -1) {
+            patients[patientIndex] = updatedPatient;
+            renderTable();
             showSuccess('Patient archivé avec succès');
-        } else {
-            throw new Error('Erreur lors de l\'archivage');
         }
     } catch (error) {
         console.error('Erreur lors de l\'archivage:', error);
-        showError('Impossible d\'archiver le patient');
+        showError(error.message || 'Impossible d\'archiver le patient');
     } finally {
+        archiveModal.style.display = 'none';
         patientToArchive = null;
     }
 }
@@ -243,23 +251,31 @@ async function restorePatient(id) {
         const response = await fetch(`/api/patients/${id}/restore`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                champ: 'archived',
+                nouvelleValeur: 'false'
+            })
         });
 
-        if (response.ok) {
-            const patient = patients.find(p => p._id === id);
-            if (patient) {
-                patient.archived = false;
-                renderTable();
-            }
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Erreur lors de la restauration');
+        }
+
+        const updatedPatient = await response.json();
+        const patientIndex = patients.findIndex(p => p._id === id);
+
+        if (patientIndex !== -1) {
+            patients[patientIndex] = updatedPatient;
+            renderTable();
             showSuccess('Patient restauré avec succès');
-        } else {
-            throw new Error('Erreur lors de la restauration');
         }
     } catch (error) {
         console.error('Erreur lors de la restauration:', error);
-        showError('Impossible de restaurer le patient');
+        showError(error.message || 'Impossible de restaurer le patient');
     }
 }
 
@@ -267,9 +283,17 @@ async function restorePatient(id) {
 function showArchiveModal(id) {
     patientToArchive = id;
     const modal = document.getElementById('archiveModal');
+    const patientName = document.getElementById('patientName');
+
+    // Trouver le patient
+    const patient = patients.find(p => p._id === id);
+    if (!patient) return;
+
+    // Mettre à jour le nom du patient dans le modal
+    patientName.textContent = `${patient.nom} ${patient.prenom}`;
+
+    // Afficher le modal avec animation
     modal.style.display = 'block';
-    
-    // Ajouter une animation de fondu
     modal.style.opacity = '0';
     setTimeout(() => {
         modal.style.opacity = '1';
@@ -352,119 +376,4 @@ function viewPatient(id) {
 
 function editPatient(id) {
     window.location.href = `/modifier-patient/${id}`;
-}
-
-// Fonctions d'archivage
-async function archivePatient(id) {
-    try {
-        const response = await fetch(`/api/patients/${id}/archive`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Erreur lors de l\'archivage');
-        }
-
-        // Mettre à jour l'interface
-        const patient = patients.find(p => p._id === id);
-        if (patient) {
-            patient.archived = true;
-            patient.dateArchivage = new Date();
-            renderTable();
-            showSuccess('Patient archivé avec succès');
-        }
-    } catch (error) {
-        console.error('Erreur:', error);
-        showError(error.message);
-    }
-}
-
-async function restorePatient(id) {
-    try {
-        const response = await fetch(`/api/patients/${id}/restore`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || 'Erreur lors de la restauration');
-        }
-
-        // Mettre à jour l'interface
-        const patient = patients.find(p => p._id === id);
-        if (patient) {
-            patient.archived = false;
-            patient.dateArchivage = null;
-            renderTable();
-            showSuccess('Patient restauré avec succès');
-        }
-    } catch (error) {
-        console.error('Erreur:', error);
-        showError(error.message);
-    }
-}
-
-// Fonction pour afficher le modal de confirmation d'archivage
-function showArchiveModal(id) {
-    const modal = document.getElementById('archiveModal');
-    const confirmBtn = document.getElementById('confirmArchive');
-    const cancelBtn = document.getElementById('cancelArchive');
-    const patientName = document.getElementById('patientName');
-
-    // Trouver le patient
-    const patient = patients.find(p => p._id === id);
-    if (!patient) return;
-
-    // Mettre à jour le nom du patient dans le modal
-    patientName.textContent = `${patient.nom} ${patient.prenom}`;
-
-    // Configurer les événements
-    confirmBtn.onclick = () => {
-        archivePatient(id);
-        modal.style.display = 'none';
-    };
-
-    cancelBtn.onclick = () => {
-        modal.style.display = 'none';
-    };
-
-    // Afficher le modal
-    modal.style.display = 'block';
-}
-
-// Fonction pour afficher le modal de confirmation de restauration
-function showRestoreModal(id) {
-    const modal = document.getElementById('restoreModal');
-    const confirmBtn = document.getElementById('confirmRestore');
-    const cancelBtn = document.getElementById('cancelRestore');
-    const patientName = document.getElementById('restorePatientName');
-
-    // Trouver le patient
-    const patient = patients.find(p => p._id === id);
-    if (!patient) return;
-
-    // Mettre à jour le nom du patient dans le modal
-    patientName.textContent = `${patient.nom} ${patient.prenom}`;
-
-    // Configurer les événements
-    confirmBtn.onclick = () => {
-        restorePatient(id);
-        modal.style.display = 'none';
-    };
-
-    cancelBtn.onclick = () => {
-        modal.style.display = 'none';
-    };
-
-    // Afficher le modal
-    modal.style.display = 'block';
 }
